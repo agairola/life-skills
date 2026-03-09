@@ -18,16 +18,22 @@ The best fuel price API in Australia. Provides native radius search from lat/lng
 
 ### Configure the skill
 
-Add to your shell profile (`~/.zshrc` or `~/.bashrc`):
+Save your credentials to the secure config file:
 
 ```bash
-export FUELCHECK_CONSUMER_KEY=your-consumer-key
-export FUELCHECK_CONSUMER_SECRET=your-consumer-secret
+mkdir -p ~/.config/fuel-pricing
+cat > ~/.config/fuel-pricing/credentials.json << 'EOF'
+{
+  "fuelcheck_key": "your-consumer-key",
+  "fuelcheck_secret": "your-consumer-secret"
+}
+EOF
+chmod 600 ~/.config/fuel-pricing/credentials.json
 ```
 
-Then restart your terminal or run `source ~/.zshrc`.
+The skill will automatically detect the credentials and use the official API for NSW, ACT, and Tasmania.
 
-The skill will automatically detect the key and use the official API for NSW, ACT, and Tasmania.
+> **Note:** Environment variables (`FUELCHECK_CONSUMER_KEY` / `FUELCHECK_CONSUMER_SECRET`) are still supported for backwards compatibility but the credentials file is preferred.
 
 ### What you get
 

@@ -28,13 +28,13 @@ Trigger this skill when the user:
 ## Prerequisites
 
 - **uv** — `brew install uv` (macOS) or `pip install uv` (all platforms)
-- **API keys** — not needed. Optional: `FUELCHECK_CONSUMER_KEY` for official NSW govt data.
+- **API keys** — not needed. Optional: FuelCheck keys in `~/.config/fuel-pricing/credentials.json` for official NSW govt data.
 - **Dependencies** — declared inline (PEP 723), installed automatically by `uv run`.
 
 ## Setup Status
 
 !`command -v uv > /dev/null 2>&1 && echo "uv: installed" || echo "uv: NOT INSTALLED"`
-!`test -n "$FUELCHECK_CONSUMER_KEY" && echo "FuelCheck API: configured (real-time govt data for NSW/ACT/TAS)" || echo "FuelCheck API: not configured (using community data — may be stale)"`
+!`test -f ~/.config/fuel-pricing/credentials.json && python3 -c "import json; d=json.load(open('$HOME/.config/fuel-pricing/credentials.json')); print('FuelCheck API: configured' if d.get('fuelcheck_key') else 'FuelCheck API: not configured')" 2>/dev/null || echo "FuelCheck API: not configured (using community data — may be stale)"`
 
 ## Location Flow (IMPORTANT — follow this exactly)
 
@@ -229,16 +229,20 @@ Tip: Some prices may be outdated. You can get real-time data by setting up a fre
 5. Share them with me — I'll save them for you.
 ```
 
-**When the user provides keys**, save them to the shell profile:
+**When the user provides keys**, save them securely:
 
 ```bash
-# Add to ~/.zshrc (macOS) or ~/.bashrc (Linux)
-echo 'export FUELCHECK_CONSUMER_KEY="<key>"' >> ~/.zshrc
-echo 'export FUELCHECK_CONSUMER_SECRET="<secret>"' >> ~/.zshrc
-source ~/.zshrc
+mkdir -p ~/.config/fuel-pricing
+cat > ~/.config/fuel-pricing/credentials.json << 'CREDS'
+{
+  "fuelcheck_key": "<key>",
+  "fuelcheck_secret": "<secret>"
+}
+CREDS
+chmod 600 ~/.config/fuel-pricing/credentials.json
 ```
 
-Then confirm: "Keys saved. Future fuel price lookups will use real-time government data for NSW, ACT, and Tasmania."
+Then confirm: "Keys saved securely. Future fuel price lookups will use real-time government data for NSW, ACT, and Tasmania."
 
 **Do NOT show the nudge if:**
 - FuelCheck is already configured (check setup status above)

@@ -9,7 +9,7 @@
 Fuel Pricing Australia — find cheapest fuel near you.
 
 Zero-config: works immediately with no API keys.
-Optional: set FUELCHECK_CONSUMER_KEY + FUELCHECK_CONSUMER_SECRET for official NSW govt data.
+Optional: save FuelCheck API keys to ~/.config/fuel-pricing/credentials.json for official NSW govt data.
 
 Usage:
     uv run fuel_prices.py                          # auto-detect location
@@ -141,6 +141,7 @@ class Location:
 # ---------------------------------------------------------------------------
 
 CACHE_DIR = Path.home() / ".config" / "fuel-pricing"
+CREDENTIALS_PATH = CACHE_DIR / "credentials.json"
 CACHE_TTL_SECONDS = 300  # 5 minutes
 
 
@@ -165,6 +166,45 @@ def cache_get(key: str) -> dict | None:
 def cache_set(key: str, payload: dict) -> None:
     path = _cache_path(key)
     path.write_text(json.dumps({"_cached_at": time.time(), "payload": payload}))
+
+
+# ---------------------------------------------------------------------------
+# Credentials (secure file-based storage)
+# ---------------------------------------------------------------------------
+
+
+def _get_credentials() -> dict:
+    """Read API credentials. File takes priority over env vars."""
+    creds = {}
+    # 1. Try credentials file (preferred — chmod 600, not in shell env)
+    if CREDENTIALS_PATH.exists():
+        try:
+            creds = json.loads(CREDENTIALS_PATH.read_text())
+        except (json.JSONDecodeError, OSError):
+            pass
+    # 2. Fall back to env vars for backwards compatibility
+    if not creds.get("fuelcheck_key"):
+        key = os.environ.get("FUELCHECK_CONSUMER_KEY", "")
+        secret = os.environ.get("FUELCHECK_CONSUMER_SECRET", "")
+        if key and secret:
+            creds["fuelcheck_key"] = key
+            creds["fuelcheck_secret"] = secret
+    return creds
+
+
+def save_credentials(key: str, secret: str) -> None:
+    """Save API credentials to file with restricted permissions."""
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    creds = {}
+    if CREDENTIALS_PATH.exists():
+        try:
+            creds = json.loads(CREDENTIALS_PATH.read_text())
+        except (json.JSONDecodeError, OSError):
+            pass
+    creds["fuelcheck_key"] = key
+    creds["fuelcheck_secret"] = secret
+    CREDENTIALS_PATH.write_text(json.dumps(creds, indent=2))
+    CREDENTIALS_PATH.chmod(0o600)
 
 
 # ---------------------------------------------------------------------------
@@ -726,8 +766,9 @@ async def fetch_fuelcheck(
     client: "httpx.AsyncClient", location: Location, radius_km: float
 ) -> list[Station]:
     """NSW FuelCheck official govt API — NSW, ACT, TAS. Requires env vars."""
-    consumer_key = os.environ.get("FUELCHECK_CONSUMER_KEY", "")
-    consumer_secret = os.environ.get("FUELCHECK_CONSUMER_SECRET", "")
+    creds = _get_credentials()
+    consumer_key = creds.get("fuelcheck_key", "")
+    consumer_secret = creds.get("fuelcheck_secret", "")
     if not consumer_key or not consumer_secret:
         return []
 
