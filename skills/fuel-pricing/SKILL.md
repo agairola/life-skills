@@ -103,26 +103,33 @@ DO NOT use markdown tables. They don't render on mobile chat platforms (Telegram
 ```
 Cheapest [fuel type]: $[price]/L
 [Station name] · [distance] km · [freshness]
+[map_url]
 
 Nearby stations:
 1. [Station] — $[price]/L · [distance] km · [freshness]
+   [map_url]
 2. [Station] — $[price]/L · [distance] km · [freshness]
-3. [Station] — $[price]/L · [distance] km · [freshness]
+   [map_url]
 
 [N] stations within [radius]km of [location] · [source]
 ```
+
+Each station in the JSON includes a `map_url` field (Google Maps link). Always include it so users can tap to navigate.
 
 ### Example
 
 ```
 Cheapest U91: $2.17/L
 Ampol Smeaton Grange · 4.4 km · 6 hr ago
+https://maps.google.com/?q=-34.032313,150.756161
 
 Nearby stations:
 1. EG Ampol Oran Park — $2.19/L · 0.6 km · 6 days ago
+   https://maps.google.com/?q=-33.999736,150.73839
 2. BP Bringelly — $2.19/L · 1.4 km · 3 days ago
+   https://maps.google.com/?q=-33.986338,150.728801
 3. 7-Eleven Gregory Hills — $2.19/L · 3.7 km · 6 days ago
-4. Ampol Foodary Narellan — $2.19/L · 5.0 km · 6 days ago
+   https://maps.google.com/?q=-34.024252,150.759008
 
 9 stations within 5km of Oran Park · FuelSnoop
 ```

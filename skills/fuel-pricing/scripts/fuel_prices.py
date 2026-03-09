@@ -986,7 +986,11 @@ def sort_key(sort_fuel: str, staleness_map: dict[int, dict]) -> Callable[[Statio
 
 def to_dict_with_staleness(staleness_map: dict[int, dict]) -> Callable[[Station], dict]:
     """Return a function that converts a station to a dict with staleness info."""
-    return lambda s: {**asdict(s), "staleness": staleness_map.get(id(s), _compute_staleness(""))}
+    return lambda s: {
+        **asdict(s),
+        "map_url": f"https://maps.google.com/?q={s.lat},{s.lng}",
+        "staleness": staleness_map.get(id(s), _compute_staleness("")),
+    }
 
 
 def _default_sort_fuel(stations: list[Station]) -> str:
