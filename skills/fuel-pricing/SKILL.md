@@ -209,20 +209,24 @@ After showing results for the **first time**, check if FuelCheck is configured. 
 
 For platforms with hyperlinks:
 ```
-Tip: Some of these prices are a few days old. For real-time government data, you can set up a free NSW FuelCheck API key (takes 2 minutes):
+Tip: Some of these prices are a few days old. For real-time government data, you can set up a free NSW FuelCheck API key (takes ~3 minutes):
 
-1. Sign up at api.nsw.gov.au
-2. Subscribe to the "Fuel API" product (free)
-3. Then tell me your Consumer Key and Secret — I'll save them so future lookups use live data.
+1. Go to api.nsw.gov.au and click "Sign up" — just name + email
+2. Once logged in, go to "My Apps" and create a new app (any name, e.g. "Fuel Prices")
+3. Go to the API Catalogue, find "Fuel API", and click "Subscribe" — select your app and the free plan (2,500 calls/month)
+4. Go back to "My Apps" → click your app → you'll see your API Key and API Secret
+5. Share those with me and I'll save them so future lookups use live government data.
 ```
 
 For platforms without hyperlinks:
 ```
 Tip: Some prices may be outdated. You can get real-time data by setting up a free API key:
 
-1. Go to api.nsw.gov.au and sign up
-2. Subscribe to "Fuel API" (free, 2 min)
-3. Share your Consumer Key and Secret with me — I'll save them for you.
+1. Go to api.nsw.gov.au and sign up (name + email)
+2. Log in, go to "My Apps", create a new app (any name works)
+3. In the API Catalogue, find "Fuel API" and subscribe (free plan)
+4. Back in "My Apps", click your app to see your API Key and Secret
+5. Share them with me — I'll save them for you.
 ```
 
 **When the user provides keys**, save them to the shell profile:

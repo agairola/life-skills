@@ -532,11 +532,12 @@ def location_from_args(
             if geo_loc:
                 return geo_loc
             # Fall back to IP-based behavior if Nominatim fails
+            print(f"Warning: geocoding failed for '{query}', falling back to IP geolocation", file=sys.stderr)
             ip_loc = await _geolocate_ip(client)
             if ip_loc:
                 ip_loc.city = args.location or ip_loc.city
                 ip_loc.postcode = str(args.postcode) if args.postcode else ip_loc.postcode
-                ip_loc.method = "manual"
+                ip_loc.method = "ip-fallback"
                 return ip_loc
             # Can't geolocate at all — return a stub
             return Location(
@@ -556,6 +557,9 @@ def location_from_args(
 
 def _state_from_coords(lat: float, lng: float) -> str:
     """Rough state detection from coordinates. Good enough for routing."""
+    # Tasmania: lat < -39.5 and lng 143.5-149 (check first — overlaps with VIC lng bands)
+    if lat < -39.5 and 143.5 < lng < 149:
+        return "TAS"
     if lng < 129:
         return "WA"
     if lng < 138:
@@ -567,6 +571,9 @@ def _state_from_coords(lat: float, lng: float) -> str:
             return "QLD"
         if lat > -34:
             return "NSW"
+        # SA/VIC border is ~141°E; in the 138-141 band, SA is above ~-36
+        if lat > -36:
+            return "SA"
         if lat > -38:
             return "VIC"
         return "SA"
@@ -582,8 +589,6 @@ def _state_from_coords(lat: float, lng: float) -> str:
         if lat > -37.5:
             return "NSW"
         return "VIC"
-    if lat < -40:
-        return "TAS"
     return "QLD"
 
 
@@ -1032,6 +1037,9 @@ STATE_ADAPTERS = {
     "NT": [fetch_petrolspy],
 }
 
+# States where we merge FuelCheck + FuelSnoop for best coverage + freshness
+MERGE_STATES = {"NSW", "ACT", "TAS"}
+
 
 def _compute_staleness(updated_at: str) -> dict:
     """Parse an ISO timestamp and return staleness info."""
@@ -1221,10 +1229,106 @@ async def fetch_prices(
         return result
 
 
+def _merge_stations(primary: list["Station"], secondary: list["Station"]) -> list["Station"]:
+    """Merge two station lists. Match by proximity (<150m). Take freshest price per fuel type."""
+    from datetime import datetime, timezone
+
+    def _parse_ts(ts: str) -> float:
+        """Return unix timestamp, or 0 if unparseable."""
+        if not ts or not ts.strip():
+            return 0
+        for fmt in ("%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%S+00:00", "%Y-%m-%d %H:%M:%S"):
+            try:
+                return datetime.strptime(ts.strip(), fmt).replace(tzinfo=timezone.utc).timestamp()
+            except ValueError:
+                continue
+        return 0
+
+    # Index primary stations by (rounded lat, rounded lng) for fast lookup
+    # Use 4 decimal places (~11m precision) for bucketing, check 150m for match
+    buckets: dict[tuple[int, int], list["Station"]] = {}
+    for s in primary:
+        key = (round(s.lat * 1000), round(s.lng * 1000))
+        buckets.setdefault(key, []).append(s)
+
+    merged = {f"{s.lat:.5f},{s.lng:.5f}": s for s in primary}
+
+    for s2 in secondary:
+        # Search nearby buckets for a match
+        bkey = (round(s2.lat * 1000), round(s2.lng * 1000))
+        match = None
+        for dk_lat in (-1, 0, 1):
+            for dk_lng in (-1, 0, 1):
+                for candidate in buckets.get((bkey[0] + dk_lat, bkey[1] + dk_lng), []):
+                    if haversine_km(s2.lat, s2.lng, candidate.lat, candidate.lng) < 0.15:
+                        match = candidate
+                        break
+                if match:
+                    break
+            if match:
+                break
+
+        if match:
+            # Merge: for each fuel type, take the price with the newer timestamp
+            mkey = f"{match.lat:.5f},{match.lng:.5f}"
+            existing = merged[mkey]
+            ts_existing = _parse_ts(existing.updated_at)
+            ts_new = _parse_ts(s2.updated_at)
+
+            for fuel, price in s2.prices.items():
+                if price is None:
+                    continue
+                if fuel not in existing.prices or existing.prices[fuel] is None:
+                    # New fuel type not in primary — add it
+                    existing.prices[fuel] = price
+                elif ts_new >= ts_existing:
+                    # Secondary has same or newer timestamp — take its price
+                    # (>= so government data wins ties)
+                    existing.prices[fuel] = price
+
+            # Update timestamp to the newest
+            if ts_new >= ts_existing:
+                existing.updated_at = s2.updated_at
+        else:
+            # No match — add as new station
+            skey = f"{s2.lat:.5f},{s2.lng:.5f}"
+            if skey not in merged:
+                merged[skey] = s2
+
+    return list(merged.values())
+
+
 async def _fetch_from_adapters(client, state, location, radius_km):
-    """Try adapters in order, return first successful result."""
+    """Fetch from adapters. For merge states, combine FuelCheck + FuelSnoop for best coverage."""
+
+    if state in MERGE_STATES:
+        # Try to fetch from both FuelCheck and FuelSnoop in parallel
+        fc_result, fs_result = await asyncio.gather(
+            _safe_fetch(fetch_fuelcheck, client, location, radius_km),
+            _safe_fetch(fetch_fuelsnoop, client, location, radius_km),
+        )
+
+        if fc_result and fs_result:
+            # Merge: FuelSnoop as base (more stations), FuelCheck overrides where fresher
+            merged = _merge_stations(fs_result, fc_result)
+            # Tag merged source
+            for s in merged:
+                s.source = "FuelCheck+FuelSnoop"
+            print(f"Merged {len(fc_result)} FuelCheck + {len(fs_result)} FuelSnoop → {len(merged)} stations", file=sys.stderr)
+            return merged, "FuelCheck+FuelSnoop"
+        elif fc_result:
+            return fc_result, "FuelCheck"
+        elif fs_result:
+            return fs_result, "FuelSnoop"
+        # Both failed — fall through to PetrolSpy
+
+    # Standard fallback chain
     adapters = STATE_ADAPTERS.get(state, [fetch_petrolspy])
+    # Skip adapters already tried in merge path
+    skip = {fetch_fuelcheck, fetch_fuelsnoop} if state in MERGE_STATES else set()
     for adapter in adapters:
+        if adapter in skip:
+            continue
         try:
             results = await adapter(client, location, radius_km)
             if results:
@@ -1233,6 +1337,15 @@ async def _fetch_from_adapters(client, state, location, radius_km):
             print(f"{adapter.__name__} failed: {e}", file=sys.stderr)
             continue
     return [], ""
+
+
+async def _safe_fetch(adapter, client, location, radius_km) -> list:
+    """Call an adapter, returning [] on any failure."""
+    try:
+        return await adapter(client, location, radius_km)
+    except Exception as e:
+        print(f"{adapter.__name__} failed: {e}", file=sys.stderr)
+        return []
 
 
 # ---------------------------------------------------------------------------
@@ -1267,10 +1380,13 @@ async def main() -> None:
     # Check cache
     cache_key = f"prices_{args.location}_{args.postcode}_{args.lat}_{args.lng}_{args.fuel_type}_{args.radius}"
     if args.no_cache:
-        # Also clear location cache so re-enrichment happens
+        # Clear both location and price cache
         loc_cache = CACHE_DIR / "location.json"
         if loc_cache.exists():
             loc_cache.unlink()
+        price_cache = _cache_path(cache_key)
+        if price_cache.exists():
+            price_cache.unlink()
     else:
         cached = cache_get(cache_key)
         if cached:
@@ -1301,7 +1417,7 @@ async def main() -> None:
         sys.exit(1)
 
     # Flag IP-only detection so the agent knows accuracy is limited
-    if location.method == "ip-api.com" and not args.location and not args.postcode:
+    if location.method in ("ip-api.com", "ip-fallback") and not (args.lat and args.lng):
         location_confidence = "low"
     else:
         location_confidence = "high"

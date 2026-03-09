@@ -6,12 +6,15 @@ The skill works out of the box using free public sources (FuelSnoop, PetrolSpy, 
 
 The best fuel price API in Australia. Provides native radius search from lat/lng, all fuel types, real-time updates.
 
-### How to register (free, takes ~2 minutes)
+### How to register (free, takes ~3 minutes)
 
 1. Go to https://api.nsw.gov.au
-2. Click "Sign Up" and create an account
-3. Navigate to "Products" and subscribe to "Fuel API"
-4. You'll receive a **Consumer Key** and **Consumer Secret**
+2. Click **"Sign Up"** — enter your name and email to create an account
+3. Log in, then go to **"My Apps"** in the top navigation
+4. Click **"Create App"** — give it any name (e.g. "Fuel Prices"), no other fields required
+5. Go to the **API Catalogue**, find **"Fuel API"**, and click **"Subscribe"**
+6. Select your app from the dropdown, choose the **free plan** (2,500 calls/month), and confirm
+7. Go back to **"My Apps"** → click your app name → you'll see your **API Key** and **API Secret**
 
 ### Configure the skill
 
