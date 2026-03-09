@@ -98,38 +98,62 @@ uv run "${CLAUDE_SKILL_DIR}/scripts/fuel_prices.py" --location "Parramatta" --fu
 
 DO NOT use markdown tables. They don't render on mobile chat platforms (Telegram, WhatsApp, Signal). Use plain text with line breaks instead.
 
+### Map Links
+
+Each station in the JSON includes two URL fields:
+- `google_maps_url` — searches by business name + address
+- `apple_maps_url` — pins exact lat/lng with business name label
+
+Use hyperlinks (not raw URLs) where the platform supports them:
+- **Telegram, Discord, terminal**: Use markdown links — `[Station Name](url)`
+- **WhatsApp, Signal, SMS**: These don't support hyperlinks. Put the link on a separate line.
+
+Provide **both** Google Maps and Apple Maps links so the user can choose.
+
 ### Output Format
 
+For platforms that support hyperlinks (Telegram, Discord, terminal):
 ```
 Cheapest [fuel type]: $[price]/L
-[Station name] · [distance] km · [freshness]
-[map_url]
+[Station Name](google_maps_url) · [distance] km · [freshness]
+Also on [Apple Maps](apple_maps_url)
 
 Nearby stations:
-1. [Station] — $[price]/L · [distance] km · [freshness]
-   [map_url]
-2. [Station] — $[price]/L · [distance] km · [freshness]
-   [map_url]
+1. [Station Name](google_maps_url) — $[price]/L · [distance] km
+   [Apple Maps](apple_maps_url)
+2. [Station Name](google_maps_url) — $[price]/L · [distance] km
+   [Apple Maps](apple_maps_url)
 
 [N] stations within [radius]km of [location] · [source]
 ```
 
-Each station in the JSON includes a `map_url` field (Google Maps link). Always include it so users can tap to navigate.
+For platforms without hyperlink support (WhatsApp, Signal, SMS):
+```
+Cheapest [fuel type]: $[price]/L
+[Station Name] · [distance] km · [freshness]
+Google Maps: [google_maps_url]
+Apple Maps: [apple_maps_url]
 
-### Example
+Nearby stations:
+1. [Station Name] — $[price]/L · [distance] km
+   Google Maps: [google_maps_url]
+   Apple Maps: [apple_maps_url]
+
+[N] stations within [radius]km of [location] · [source]
+```
+
+### Example (Telegram/Discord)
 
 ```
 Cheapest U91: $2.17/L
-Ampol Smeaton Grange · 4.4 km · 6 hr ago
-https://maps.google.com/?q=-34.032313,150.756161
+[Ampol Smeaton Grange](https://www.google.com/maps/search/?api=1&query=Ampol%20Smeaton%20Grange%2C%201%20DUNN%20RD%2C%20SMEATON%20GRANGE%20NSW%202567) · 4.4 km · 6 hr ago
+Also on [Apple Maps](https://maps.apple.com/?q=Ampol%20Smeaton%20Grange&ll=-34.032313,150.756161)
 
 Nearby stations:
-1. EG Ampol Oran Park — $2.19/L · 0.6 km · 6 days ago
-   https://maps.google.com/?q=-33.999736,150.73839
-2. BP Bringelly — $2.19/L · 1.4 km · 3 days ago
-   https://maps.google.com/?q=-33.986338,150.728801
-3. 7-Eleven Gregory Hills — $2.19/L · 3.7 km · 6 days ago
-   https://maps.google.com/?q=-34.024252,150.759008
+1. [EG Ampol Oran Park](https://www.google.com/maps/search/?api=1&query=...) — $2.19/L · 0.6 km
+   [Apple Maps](https://maps.apple.com/?q=EG%20Ampol%20Oran%20Park&ll=-33.999736,150.73839)
+2. [BP Bringelly](https://www.google.com/maps/search/?api=1&query=...) — $2.19/L · 1.4 km
+3. [7-Eleven Gregory Hills](https://www.google.com/maps/search/?api=1&query=...) — $2.19/L · 3.7 km
 
 9 stations within 5km of Oran Park · FuelSnoop
 ```
@@ -144,6 +168,7 @@ Nearby stations:
 - Cap at 10 stations
 - If user asked about a specific fuel type, show only that type
 - If no fuel type specified, default to U91 or E10
+- Always show both Google Maps and Apple Maps for the cheapest station; for the rest, Google Maps is enough unless the user is on an Apple device
 
 ## Handling Edge Cases
 

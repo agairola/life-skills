@@ -33,6 +33,7 @@ from dataclasses import asdict, dataclass
 from functools import reduce
 from pathlib import Path
 from typing import Callable
+from urllib.parse import quote
 
 # ---------------------------------------------------------------------------
 # Data model
@@ -986,11 +987,15 @@ def sort_key(sort_fuel: str, staleness_map: dict[int, dict]) -> Callable[[Statio
 
 def to_dict_with_staleness(staleness_map: dict[int, dict]) -> Callable[[Station], dict]:
     """Return a function that converts a station to a dict with staleness info."""
-    return lambda s: {
-        **asdict(s),
-        "map_url": f"https://maps.google.com/?q={s.lat},{s.lng}",
-        "staleness": staleness_map.get(id(s), _compute_staleness("")),
-    }
+    def _build(s: Station) -> dict:
+        query = quote(f"{s.name}, {s.address}")
+        return {
+            **asdict(s),
+            "google_maps_url": f"https://www.google.com/maps/search/?api=1&query={query}",
+            "apple_maps_url": f"https://maps.apple.com/?q={quote(s.name)}&ll={s.lat},{s.lng}",
+            "staleness": staleness_map.get(id(s), _compute_staleness("")),
+        }
+    return _build
 
 
 def _default_sort_fuel(stations: list[Station]) -> str:
