@@ -19,7 +19,7 @@ Find the cheapest fuel at nearby stations across Australia.
 
 No installs, no API keys, no config. Everything is handled silently.
 
-- **uv** is needed. If missing: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+- **uv** is needed. If missing: `brew install uv` (macOS) or `pip install uv`
 - **API keys** not needed. Free public APIs. Optional: `FUELCHECK_CONSUMER_KEY` for official NSW govt data.
 - **Dependencies** declared inline (PEP 723) — `uv run` installs them automatically.
 
@@ -41,7 +41,7 @@ If all three fail, ask the user for their suburb or postcode.
 
 ### Step 0: Ensure uv is available
 
-If not installed: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+If not installed: `brew install uv` (macOS) or `pip install uv` (all platforms)
 
 ### Step 1: Get prices
 
@@ -95,6 +95,10 @@ Cheapest [fuel type]: $[price]/L at [Station] ([distance] away, updated [freshne
 | WA | FuelWatch (govt, includes tomorrow's prices) | PetrolSpy |
 | NSW, QLD | FuelSnoop | PetrolSpy |
 | VIC, SA, TAS, NT, ACT | PetrolSpy | — |
+
+All data sources are read-only public APIs. FuelWatch is official Australian government open data.
+FuelSnoop and PetrolSpy are community data aggregators. No user data is sent to any service
+beyond coordinates for the search area.
 
 ## Fuel types
 
