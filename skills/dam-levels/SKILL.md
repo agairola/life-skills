@@ -11,6 +11,12 @@ description: >-
 
 Check current dam levels and water storage for Greater Sydney. Zero config — no API keys, no setup.
 
+## Install
+
+```bash
+npx skills add agairola/life-skills --skill dam-levels
+```
+
 ## When to Use
 
 Trigger this skill when the user:

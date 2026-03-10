@@ -11,6 +11,12 @@ description: >-
 
 Check current UV index and sun safety advice for Australian cities. Zero config — no API keys, no setup.
 
+## Install
+
+```bash
+npx skills add agairola/life-skills --skill uv-sun
+```
+
 ## When to Use
 
 Trigger this skill when the user:

@@ -12,6 +12,12 @@ description: >-
 
 Check toll road prices and calculate route toll costs across Sydney's motorway network. Zero config — no API keys, no setup.
 
+## Install
+
+```bash
+npx skills add agairola/life-skills --skill sydney-tolls
+```
+
 ## When to Use
 
 Trigger this skill when the user:

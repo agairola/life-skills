@@ -12,6 +12,12 @@ description: >-
 
 Check current air quality and pollution levels at NSW monitoring stations. Zero config — no API keys, no setup.
 
+## Install
+
+```bash
+npx skills add agairola/life-skills --skill air-quality
+```
+
 ## When to Use
 
 Trigger this skill when the user:

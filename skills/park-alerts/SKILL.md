@@ -12,6 +12,12 @@ description: >-
 
 Check alerts, closures, and fire bans for NSW National Parks. Zero config — no API keys, no setup.
 
+## Install
+
+```bash
+npx skills add agairola/life-skills --skill park-alerts
+```
+
 ## When to Use
 
 Trigger this skill when the user:

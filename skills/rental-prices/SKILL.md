@@ -12,6 +12,12 @@ description: >-
 
 Check median rental prices for Sydney suburbs. Zero config — no API keys, no setup. Data is embedded directly in the script (NSW DCJ Rent and Sales Report, Q4 2025).
 
+## Install
+
+```bash
+npx skills add agairola/life-skills --skill rental-prices
+```
+
 ## When to Use
 
 Trigger this skill when the user:

@@ -13,6 +13,12 @@ description: >-
 
 Check live traffic incidents, roadworks, and hazards in Sydney. Works without API keys — best with a free TfNSW key for real-time incident data.
 
+## Install
+
+```bash
+npx skills add agairola/life-skills --skill sydney-traffic
+```
+
 ## When to Use
 
 Trigger this skill when the user:

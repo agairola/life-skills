@@ -14,6 +14,12 @@ description: >-
 
 Check water quality and swimming safety at NSW beaches. Zero config — no API keys, no setup.
 
+## Install
+
+```bash
+npx skills add agairola/life-skills --skill beach-check
+```
+
 ## When to Use
 
 Trigger this skill when the user:

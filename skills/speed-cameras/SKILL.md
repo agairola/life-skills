@@ -12,6 +12,12 @@ description: >-
 
 Find fixed speed cameras and red light cameras near you in NSW. Zero config — no API keys, no setup.
 
+## Install
+
+```bash
+npx skills add agairola/life-skills --skill speed-cameras
+```
+
 ## When to Use
 
 Trigger this skill when the user:

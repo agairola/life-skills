@@ -15,6 +15,12 @@ description: >-
 
 Find the cheapest fuel at nearby stations across Australia. Zero config — no API keys, no setup.
 
+## Install
+
+```bash
+npx skills add agairola/life-skills --skill fuel-pricing
+```
+
 ## When to Use
 
 Trigger this skill when the user:

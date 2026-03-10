@@ -14,6 +14,12 @@ description: >-
 
 Plan trips, check real-time departures, and find stops across Sydney's public transport network. Works without API keys — best with a free TfNSW key for real-time data.
 
+## Install
+
+```bash
+npx skills add agairola/life-skills --skill sydney-commute
+```
+
 ## When to Use
 
 Trigger this skill when the user:
