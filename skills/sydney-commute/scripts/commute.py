@@ -547,7 +547,7 @@ def _google_maps_transit_url(origin: str, destination: str, departure_unix: int 
 
 def _transport_nsw_url(origin: str, destination: str) -> str:
     """Build a Transport NSW trip planner URL."""
-    return f"https://transportnsw.info/trip#/trip?from={quote(origin)}&to={quote(destination)}"
+    return f"https://transportnsw.info/trip-planner/plan?from={quote(origin)}&to={quote(destination)}"
 
 
 # ---------------------------------------------------------------------------
@@ -839,7 +839,7 @@ async def fetch_trip(
                 "arrival": last_arrive,
                 "legs": legs,
                 "google_maps_url": _google_maps_transit_url(origin, destination),
-                "transport_nsw_url": _transport_nsw_url(origin, destination),
+                "transport_nsw_url": _transport_nsw_url(origin_id, dest_id),
             }
             results.append(journey_result)
 
@@ -1070,7 +1070,7 @@ def _zero_config_result(
     elif origin:
         # For departures/stops, provide what we can
         result["fallback_urls"]["transport_nsw"] = (
-            f"https://transportnsw.info/trip#/trip?from={quote(origin)}"
+            f"https://transportnsw.info/trip-planner/plan?from={quote(origin)}"
         )
         result["fallback_urls"]["google_maps"] = (
             f"https://www.google.com/maps/search/{quote(origin)}+station"
