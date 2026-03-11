@@ -50,6 +50,7 @@ Before fetching transport info, you MUST resolve the user's origin and destinati
 - User said "from Central to Bondi Junction"? → use `--from "Central Station" --to "Bondi Junction"`. Done.
 - User shared a location pin (Telegram, WhatsApp, Signal, Discord)? Extract lat/lng → use `--lat` / `--lng` with `--from`. Done.
 - User mentioned a station, suburb, or address? → use `--from` and/or `--to`. Done.
+- **Never ask users for stop IDs** — always ask for place names. The script fuzzy-matches names to stops automatically. If the match is ambiguous (e.g. multiple stops with similar names), confirm with the user before proceeding.
 
 **Step 2: If "from here" or origin is unclear.**
 Ask them for their station or suburb. Tailor the ask to their platform:
@@ -78,8 +79,8 @@ uv run "${CLAUDE_SKILL_DIR}/scripts/commute.py" [OPTIONS]
 
 | Flag | Values | Default | Purpose |
 |------|--------|---------|---------|
-| `--from` | station/stop name or ID | *(none)* | Origin location |
-| `--to` | station/stop name or ID | *(none)* | Destination location |
+| `--from` | station, stop, or place name | *(none)* | Origin location |
+| `--to` | station, stop, or place name | *(none)* | Destination location |
 | `--mode` | `trip` `departures` `stops` | `trip` | Query mode |
 | `--depart` | `HH:MM` or `now` | `now` | Departure time |
 | `--arrive-by` | `HH:MM` | *(none)* | Arrive by time |
@@ -181,9 +182,9 @@ Show a list with transport types.
 ```
 Stops matching "Central":
 
-1. Central Station (ID: 10101200) — train, bus, lightrail
-2. Central Chalmers St (ID: 10101201) — bus
-3. Central Pitt St (ID: 10101202) — bus
+1. Central Station — train, bus, lightrail
+2. Central Chalmers St — bus
+3. Central Pitt St — bus
 ```
 
 ### Zero-Config Mode
@@ -277,9 +278,9 @@ Then confirm: "Key saved securely. Future commute queries will use real-time TfN
 | 11 | School Bus |
 | 99, 100 | Walk |
 
-### Stop ID Format
+### Stop ID Format (internal — script handles automatically)
 
-TfNSW stop IDs are numeric strings (e.g., `10101200` for Central Station). Users can provide either a stop name (which the script resolves via the stop_finder API) or a stop ID directly.
+TfNSW stop IDs are numeric strings used internally by the API. Users always provide place names — the script resolves names to IDs automatically via the stop_finder API. Never ask users for stop IDs.
 
 ### Script Location Fallback (internal — for reference only)
 
