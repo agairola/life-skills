@@ -124,40 +124,47 @@ DO NOT use markdown tables. They don't render on mobile chat platforms (Telegram
 
 ### Trip Mode
 
-Show numbered journey options with legs as arrow-separated steps.
+Show numbered journey options with legs as arrow-separated steps. Keep it simple — users just need to know what to catch, where from, and when.
+
+**Simplification rules:**
+- Show platform numbers only for large train stations (Central, Town Hall, Wynyard) — users need these to find the right platform
+- Drop wharf numbers, sides (Side A/B), and stand letters — users will find these on arrival
+- Use short line names (T4, T1, Bus 333) — drop terminus descriptions like "City to Parramatta or Leppington" which confuse users going elsewhere
+- Each leg: just say where you're going and what you're catching
+- Lead with a quick recommendation if one option is clearly best
 
 For platforms with hyperlinks (Telegram, Discord, terminal):
 ```
-Trips from Central Station to Bondi Junction:
+Best route: train → ferry (34 min)
 
-1. Train (25 min, depart 14:32)
-   Central Station → Bondi Junction Station
-   T4 Eastern Suburbs Line · Platform 18 · 5 stops
+1. Train → Ferry (34 min, depart 14:32)
+   Train from Central (Platform 21) to Circular Quay · T4 · 2 stops
+   Ferry to Manly · 18 min
    [View on Google Maps](google_maps_url) · [TfNSW Trip Planner](transport_nsw_url)
 
-2. Train → Bus (35 min, depart 14:35)
-   Central Station → Town Hall Station (T1 North Shore Line)
-   Town Hall Station → Bondi Junction (Bus 333)
+2. Train → Ferry (45 min, depart 14:35)
+   Train from Central (Platform 17) to Circular Quay · T1
+   Ferry to Manly · 22 min
    [View on Google Maps](google_maps_url)
 
-3. Train (28 min, depart 14:40)
-   Central Station → Bondi Junction Station
-   T4 Eastern Suburbs Line · Platform 18 · 5 stops
+3. Train → Ferry (33 min, depart 14:47)
+   Train from Central (Platform 17) to Circular Quay · T1
+   Ferry to Manly · 18 min
 ```
 
 For platforms without hyperlinks (WhatsApp, Signal, SMS):
 ```
-Trips from Central Station to Bondi Junction:
+Best route: train → ferry (34 min)
 
-1. Train (25 min, depart 14:32)
-   Central Station → Bondi Junction Station
-   T4 Eastern Suburbs Line · Platform 18 · 5 stops
+1. Train → Ferry (34 min, depart 14:32)
+   Train from Central (Platform 21) to Circular Quay · T4 · 2 stops
+   Ferry to Manly · 18 min
    Google Maps: [url]
    TfNSW: [url]
 
-2. Train → Bus (35 min, depart 14:35)
-   Central Station → Town Hall Station (T1 North Shore Line)
-   Town Hall Station → Bondi Junction (Bus 333)
+2. Train → Ferry (45 min, depart 14:35)
+   Train from Central (Platform 17) to Circular Quay · T1
+   Ferry to Manly · 22 min
 ```
 
 ### Departures Mode
@@ -202,7 +209,7 @@ For real-time departures and delays, you can set up a free TfNSW API key in abou
 
 ### Formatting Rules
 
-- Trip mode: numbered journeys, legs as arrow-separated steps, include line/platform info
+- Trip mode: numbered journeys, simple legs, platform only at large train stations, drop wharf/stand details, use short line codes (T4 not "T4 Eastern Suburbs Line"), lead with a recommendation
 - Departures mode: compact time-based list, highlight delays
 - Stops mode: numbered list with transport types
 - Zero-config: show URLs as clickable links with upgrade nudge
