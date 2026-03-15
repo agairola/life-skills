@@ -1,0 +1,26 @@
+{
+  "skill_name": "park-alerts",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Any closures in the Blue Mountains?",
+      "expected_output": "Runs park_alerts.py with --park 'Blue Mountains' and shows alerts grouped with category, date, and description",
+      "files": [],
+      "assertions": ["uses --park flag", "shows alert category", "shows date"]
+    },
+    {
+      "id": 2,
+      "prompt": "Are there any fire bans in NSW national parks?",
+      "expected_output": "Runs park_alerts.py with --category fire and shows fire ban alerts",
+      "files": [],
+      "assertions": ["uses --category fire", "shows fire ban alerts"]
+    },
+    {
+      "id": 3,
+      "prompt": "Planning a bushwalk in Royal National Park this weekend, anything I should know?",
+      "expected_output": "Runs park_alerts.py with --park 'Royal' and shows all alerts including closures, conditions, and fire bans",
+      "files": [],
+      "assertions": ["uses --park flag", "shows relevant alerts"]
+    }
+  ]
+}

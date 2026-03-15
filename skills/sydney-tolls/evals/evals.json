@@ -1,0 +1,26 @@
+{
+  "skill_name": "sydney-tolls",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "How much is the M2 toll?",
+      "expected_output": "Runs tolls.py with --road 'M2' and shows peak/off-peak/weekend prices for car, with E-Tag tip",
+      "files": [],
+      "assertions": ["uses --road flag", "shows peak and off-peak prices", "includes E-Tag tip"]
+    },
+    {
+      "id": 2,
+      "prompt": "How much will tolls cost from Parramatta to the airport?",
+      "expected_output": "Runs tolls.py with --from 'Parramatta' --to 'Sydney Airport' and shows itemised toll list with total",
+      "files": [],
+      "assertions": ["uses --from and --to flags", "shows total cost", "lists individual tolls"]
+    },
+    {
+      "id": 3,
+      "prompt": "Harbour Bridge toll for a motorcycle",
+      "expected_output": "Runs tolls.py with --road 'Harbour Bridge' --vehicle motorcycle and highlights that motorcycles are free",
+      "files": [],
+      "assertions": ["uses --vehicle motorcycle", "mentions free for motorcycles"]
+    }
+  ]
+}

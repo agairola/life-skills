@@ -5,6 +5,8 @@ description: >-
   Use this skill when the user asks about dam levels, water storage,
   Warragamba Dam, how full dams are, water restrictions, dam capacity,
   Sydney water supply, or reservoir levels. Works with zero configuration — no API keys needed.
+allowed-tools: Bash(uv run *), Read
+argument-hint: "[dam name]"
 ---
 
 # Dam Levels Skill
@@ -75,7 +77,7 @@ uv run "${CLAUDE_SKILL_DIR}/scripts/dam_levels.py" --all
 
 ## Presenting Results
 
-DO NOT use markdown tables. They don't render on mobile chat platforms (Telegram, WhatsApp, Signal). Use plain text with line breaks instead.
+Follow the formatting rules in [../../references/platform-formatting.md](../../references/platform-formatting.md). Key skill-specific formatting below.
 
 ### All Dams (default)
 

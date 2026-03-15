@@ -1,0 +1,26 @@
+{
+  "skill_name": "speed-cameras",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Speed cameras near Homebush",
+      "expected_output": "Runs speed_cameras.py with --location 'Homebush NSW' and shows cameras sorted by distance with map links",
+      "files": [],
+      "assertions": ["uses --location flag", "shows camera type", "shows distance", "shows map links"]
+    },
+    {
+      "id": 2,
+      "prompt": "Are there any cameras on the Pacific Highway?",
+      "expected_output": "Runs speed_cameras.py with --road 'Pacific Highway' --radius 50 and shows cameras on that road",
+      "files": [],
+      "assertions": ["uses --road flag", "mentions road filter in summary"]
+    },
+    {
+      "id": 3,
+      "prompt": "Red light cameras near me",
+      "expected_output": "Asks for location first, then runs speed_cameras.py with --type red_light",
+      "files": [],
+      "assertions": ["asks for location", "uses --type red_light"]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "skill_name": "uv-sun",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "What's the UV index in Sydney today?",
+      "expected_output": "Runs uv_sun.py with --city Sydney and shows UV index, category, sun protection advice, and SPF recommendation",
+      "files": [],
+      "assertions": ["uses --city flag or default", "shows UV index", "shows SPF recommendation"]
+    },
+    {
+      "id": 2,
+      "prompt": "Do I need sunscreen in Melbourne?",
+      "expected_output": "Runs uv_sun.py with --city Melbourne and leads with SPF recommendation",
+      "files": [],
+      "assertions": ["uses --city Melbourne", "leads with SPF advice"]
+    },
+    {
+      "id": 3,
+      "prompt": "UV levels across all Australian cities",
+      "expected_output": "Runs uv_sun.py with --all and shows cities sorted by UV index descending",
+      "files": [],
+      "assertions": ["uses --all flag", "shows multiple cities", "sorted by UV index"]
+    }
+  ]
+}

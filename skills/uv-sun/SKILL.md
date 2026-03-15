@@ -5,6 +5,8 @@ description: >-
   Use this skill when the user asks about UV index, sunscreen, sun protection,
   sunburn risk, whether it's safe to be outside in the sun, SPF recommendation,
   or sun safety for any Australian city. Works with zero configuration — no API keys needed.
+allowed-tools: Bash(uv run *), Read
+argument-hint: "[city name]"
 ---
 
 # UV Sun Skill
@@ -76,7 +78,7 @@ uv run "${CLAUDE_SKILL_DIR}/scripts/uv_sun.py" --city Perth --no-cache
 
 ## Presenting Results
 
-DO NOT use markdown tables. They don't render on mobile chat platforms (Telegram, WhatsApp, Signal). Use plain text with line breaks instead.
+Follow the formatting rules in [../../references/platform-formatting.md](../../references/platform-formatting.md). Key skill-specific formatting below.
 
 ### Single City Mode
 

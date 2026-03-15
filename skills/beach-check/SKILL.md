@@ -8,6 +8,8 @@ description: >-
   Coogee, Manly, Bronte, Maroubra, Cronulla, etc. Works with zero
   configuration — no API keys needed. Works in any environment — Telegram,
   WhatsApp, Signal, Discord, terminal, or any chat platform.
+allowed-tools: Bash(uv run *), Read
+argument-hint: "[beach name or suburb]"
 ---
 
 # Beach Check Skill
@@ -41,31 +43,10 @@ Trigger this skill when the user:
 
 !`command -v uv > /dev/null 2>&1 && echo "uv: installed" || echo "uv: NOT INSTALLED"`
 
-## Location Flow (IMPORTANT — follow this exactly)
+## Location Flow
 
-Before fetching beach data, you MUST resolve the user's location (unless they used `--beach`). Follow these steps in order — do NOT skip ahead to IP fallback.
-
-**Step 1: Check what the user already provided.**
-- User shared a location pin (Telegram, WhatsApp, Signal, Discord)? Extract lat/lng -> use `--lat` / `--lng`. Done.
-- User mentioned a suburb, city, or address? -> use `--location`. Done.
-- User mentioned a specific beach name? -> use `--beach`. Done.
-
-**Step 2: User said "near me" or "nearby" but gave no location.**
-Ask them to share location. Tailor the ask to their platform:
-- Telegram: "Tap the paperclip icon -> Location -> Send My Current Location"
-- WhatsApp: "Tap the + button -> Location -> Send Your Current Location"
-- Signal: "Tap the + button -> Location"
-- Discord/terminal: "What suburb or postcode are you near?"
-
-Wait for their response. Do not proceed without it.
-
-**Step 3: User can't or won't share location.**
-Ask: "No worries — what suburb or postcode are you near?" Wait for response.
-
-**Step 4: User refuses to give any location info.**
-Only now fall back to auto-detect (no location args). This uses IP geolocation which is city-level only and often wrong. If the result comes back with `confidence: "low"`, tell the user: "I got an approximate location of [city] from your IP but it may not be accurate. Can you tell me your suburb or postcode for better results?"
-
-**Never silently use IP geolocation when you can ask the user instead.**
+Follow the standard location resolution steps in [../../references/location-flow.md](../../references/location-flow.md) before running the script. Skill-specific additions:
+- If the user mentioned a specific beach name, use `--beach` instead of location flags.
 
 ### Command Template
 
@@ -107,7 +88,7 @@ uv run "${CLAUDE_SKILL_DIR}/scripts/beach_check.py" --location "Manly" --radius 
 
 ## Presenting Results
 
-DO NOT use markdown tables. They don't render on mobile chat platforms (Telegram, WhatsApp, Signal). Use plain text with line breaks instead.
+Follow the formatting rules in [../../references/platform-formatting.md](../../references/platform-formatting.md). Key skill-specific formatting below.
 
 ### Map Links
 

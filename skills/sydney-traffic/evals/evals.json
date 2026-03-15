@@ -1,0 +1,26 @@
+{
+  "skill_name": "sydney-traffic",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "How's the traffic near Parramatta?",
+      "expected_output": "Runs traffic.py with --location 'Parramatta NSW' and shows incidents sorted by distance with hazard type and advice",
+      "files": [],
+      "assertions": ["uses --location flag", "shows hazard type", "shows distance"]
+    },
+    {
+      "id": 2,
+      "prompt": "Any accidents on the M5?",
+      "expected_output": "Runs traffic.py with --road 'M5' --type incident and shows relevant incidents on that road",
+      "files": [],
+      "assertions": ["uses --road flag", "uses --type incident"]
+    },
+    {
+      "id": 3,
+      "prompt": "Traffic near me",
+      "expected_output": "Asks for location first before running the script",
+      "files": [],
+      "assertions": ["asks for location", "does not silently use IP geolocation"]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "skill_name": "dam-levels",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "How full are Sydney's dams?",
+      "expected_output": "Runs dam_levels.py and shows all dams with percentages, total system level, and water restriction status",
+      "files": [],
+      "assertions": ["shows total system percentage", "shows water restriction status", "lists multiple dams"]
+    },
+    {
+      "id": 2,
+      "prompt": "What's the level of Warragamba Dam?",
+      "expected_output": "Runs dam_levels.py with --dam 'Warragamba' and shows detailed info for that specific dam",
+      "files": [],
+      "assertions": ["uses --dam flag", "shows percentage", "shows volume"]
+    },
+    {
+      "id": 3,
+      "prompt": "Are there any water restrictions in Sydney?",
+      "expected_output": "Runs dam_levels.py and highlights the water restriction status prominently based on system level",
+      "files": [],
+      "assertions": ["shows water restriction status", "shows system percentage"]
+    }
+  ]
+}
