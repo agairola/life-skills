@@ -8,6 +8,8 @@ description: >-
   platform, or any Sydney public transport question. Works without API keys
   (provides Google Maps/TfNSW links) but best with a free TfNSW API key
   for real-time data.
+allowed-tools: Bash(uv run *), Read, Write
+argument-hint: "[from] [to]"
 ---
 
 # Sydney Commute Skill
@@ -42,32 +44,12 @@ Trigger this skill when the user:
 !`command -v uv > /dev/null 2>&1 && echo "uv: installed" || echo "uv: NOT INSTALLED"`
 !`test -f ~/.config/sydney-commute/credentials.json && python3 -c "import json; d=json.load(open('$HOME/.config/sydney-commute/credentials.json')); print('TfNSW API: configured' if d.get('tfnsw_api_key') else 'TfNSW API: not configured')" 2>/dev/null || echo "TfNSW API: not configured (zero-config mode — Google Maps/TfNSW links only)"`
 
-## Location Flow (IMPORTANT — follow this exactly)
+## Location Flow
 
-Before fetching transport info, you MUST resolve the user's origin and destination. Follow these steps in order.
-
-**Step 1: Extract from/to from the user message.**
-- User said "from Central to Bondi Junction"? → use `--from "Central Station" --to "Bondi Junction"`. Done.
-- User shared a location pin (Telegram, WhatsApp, Signal, Discord)? Extract lat/lng → use `--lat` / `--lng` with `--from`. Done.
-- User mentioned a station, suburb, or address? → use `--from` and/or `--to`. Done.
-- **Never ask users for stop IDs** — always ask for place names. The script fuzzy-matches names to stops automatically. If the match is ambiguous (e.g. multiple stops with similar names), confirm with the user before proceeding.
-
-**Step 2: If "from here" or origin is unclear.**
-Ask them for their station or suburb. Tailor the ask to their platform:
-- Telegram: "Tap the paperclip icon → Location → Send My Current Location"
-- WhatsApp: "Tap the + button → Location → Send Your Current Location"
-- Signal: "Tap the + button → Location"
-- Discord/terminal: "What station or suburb are you near?"
-
-Wait for their response. Do not proceed without it.
-
-**Step 3: For departures mode, only origin is needed.**
-If the user asks "next train from Central", you only need `--from "Central Station" --mode departures`.
-
-**Step 4: User can't or won't share location.**
-Ask: "No worries — what station or suburb are you near?" Wait for response.
-
-**Never silently use IP geolocation when you can ask the user instead.**
+Follow the standard location resolution steps in [../../references/location-flow.md](../../references/location-flow.md) before running the script. Skill-specific additions:
+- Extract from/to from the user message — e.g. "from Central to Bondi Junction" → `--from "Central Station" --to "Bondi Junction"`.
+- **Never ask users for stop IDs** — always ask for place names. The script fuzzy-matches names to stops automatically. If the match is ambiguous, confirm with the user before proceeding.
+- For departures mode, only origin is needed — e.g. `--from "Central Station" --mode departures`.
 
 ### Command Template
 
@@ -120,7 +102,7 @@ uv run "${CLAUDE_SKILL_DIR}/scripts/commute.py" --from "Central Station" --to "B
 
 ## Presenting Results
 
-DO NOT use markdown tables. They don't render on mobile chat platforms (Telegram, WhatsApp, Signal). Use plain text with line breaks instead.
+Follow the formatting rules in [../../references/platform-formatting.md](../../references/platform-formatting.md). Key skill-specific formatting below.
 
 ### Trip Mode
 

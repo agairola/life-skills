@@ -7,6 +7,8 @@ description: >-
   highway conditions, or any Sydney traffic question. Works without API keys
   (provides Live Traffic NSW/Google Maps links) but best with a free TfNSW API key
   for real-time incident data.
+allowed-tools: Bash(uv run *), Read, Write
+argument-hint: "[suburb or road name]"
 ---
 
 # Sydney Traffic Skill
@@ -34,39 +36,18 @@ Trigger this skill when the user:
 ## Prerequisites
 
 - **uv** — `brew install uv` (macOS) or `pip install uv` (all platforms)
-- **API keys** — not needed for basic links. Optional: TfNSW API key in `~/.config/sydney-commute/credentials.json` for real-time data.
+- **API keys** — not needed for basic links. Optional: TfNSW API key in `~/.config/sydney-traffic/credentials.json` for real-time data.
 - **Dependencies** — declared inline (PEP 723), installed automatically by `uv run`.
 
 ## Setup Status
 
 !`command -v uv > /dev/null 2>&1 && echo "uv: installed" || echo "uv: NOT INSTALLED"`
-!`test -f ~/.config/sydney-commute/credentials.json && python3 -c "import json; d=json.load(open('$HOME/.config/sydney-commute/credentials.json')); print('TfNSW API: configured' if d.get('tfnsw_api_key') else 'TfNSW API: not configured')" 2>/dev/null || echo "TfNSW API: not configured (zero-config mode — Live Traffic NSW/Google Maps links only)"`
+!`test -f ~/.config/sydney-traffic/credentials.json && python3 -c "import json; d=json.load(open('$HOME/.config/sydney-commute/credentials.json')); print('TfNSW API: configured' if d.get('tfnsw_api_key') else 'TfNSW API: not configured')" 2>/dev/null || echo "TfNSW API: not configured (zero-config mode — Live Traffic NSW/Google Maps links only)"`
 
-## Location Flow (IMPORTANT — follow this exactly)
+## Location Flow
 
-Before fetching traffic data, you MUST resolve the user's location. Follow these steps in order — do NOT skip ahead to IP fallback.
-
-**Step 1: Check what the user already provided.**
-- User shared a location pin (Telegram, WhatsApp, Signal, Discord)? Extract lat/lng -> use `--lat` / `--lng`. Done.
-- User mentioned a suburb, city, or address? -> use `--location`. Done.
-- User mentioned a specific road? -> use `--road` with a location. Done.
-
-**Step 2: User said "near me" or "nearby" but gave no location.**
-Ask them to share location. Tailor the ask to their platform:
-- Telegram: "Tap the paperclip icon -> Location -> Send My Current Location"
-- WhatsApp: "Tap the + button -> Location -> Send Your Current Location"
-- Signal: "Tap the + button -> Location"
-- Discord/terminal: "What suburb or postcode are you near?"
-
-Wait for their response. Do not proceed without it.
-
-**Step 3: User can't or won't share location.**
-Ask: "No worries — what suburb or postcode are you near?" Wait for response.
-
-**Step 4: User refuses to give any location info.**
-Only now fall back to auto-detect (no location args). This uses IP geolocation which is city-level only and often wrong. If the result comes back with `confidence: "low"`, tell the user: "I got an approximate location of [city] from your IP but it may not be accurate. Can you tell me your suburb or postcode for better results?"
-
-**Never silently use IP geolocation when you can ask the user instead.**
+Follow the standard location resolution steps in [../../references/location-flow.md](../../references/location-flow.md) before running the script. Skill-specific additions:
+- If the user mentioned a specific road, use `--road` with a location.
 
 ### Command Template
 
@@ -115,7 +96,7 @@ uv run "${CLAUDE_SKILL_DIR}/scripts/traffic.py" --location "Sydney"
 
 ## Presenting Results
 
-DO NOT use markdown tables. They don't render on mobile chat platforms (Telegram, WhatsApp, Signal). Use plain text with line breaks instead.
+Follow the formatting rules in [../../references/platform-formatting.md](../../references/platform-formatting.md). Key skill-specific formatting below.
 
 ### With API Key: Hazard List
 
@@ -217,12 +198,12 @@ Tip: For real-time traffic data, register for a free TfNSW API key (~2 minutes):
 
 ```bash
 mkdir -p ~/.config/sydney-commute
-cat > ~/.config/sydney-commute/credentials.json << 'CREDS'
+cat > ~/.config/sydney-traffic/credentials.json << 'CREDS'
 {
   "tfnsw_api_key": "<key>"
 }
 CREDS
-chmod 600 ~/.config/sydney-commute/credentials.json
+chmod 600 ~/.config/sydney-traffic/credentials.json
 ```
 
 Then confirm: "Key saved securely. Future traffic queries will use real-time TfNSW data."

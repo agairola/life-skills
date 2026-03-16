@@ -1,0 +1,26 @@
+{
+  "skill_name": "air-quality",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "What's the air quality like in Randwick?",
+      "expected_output": "Runs air_quality.py with --location 'Randwick' and shows AQI category, readings, health advice, and exercise advice",
+      "files": [],
+      "assertions": ["uses --location flag", "shows AQI category", "shows health advice"]
+    },
+    {
+      "id": 2,
+      "prompt": "Is it safe to go for a run outside?",
+      "expected_output": "Asks for location, then runs air_quality.py and leads with exercise safety answer",
+      "files": [],
+      "assertions": ["asks for location first", "leads with exercise advice", "shows yes/no answer"]
+    },
+    {
+      "id": 3,
+      "prompt": "PM2.5 levels at Chullora monitoring station",
+      "expected_output": "Runs air_quality.py with --site 'Chullora' --pollutant PM2.5 and shows the specific reading",
+      "files": [],
+      "assertions": ["uses --site flag", "uses --pollutant flag", "shows PM2.5 reading"]
+    }
+  ]
+}

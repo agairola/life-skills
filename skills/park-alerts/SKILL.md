@@ -4,8 +4,10 @@ description: >-
   Check alerts, closures, and fire bans for NSW National Parks.
   Use this skill when the user asks about park closures, fire bans,
   track closures, park conditions, whether a park is open, Blue Mountains
-  conditions, or any NSW national park alert. Works with zero
-  configuration — no API keys needed.
+  conditions, bushwalking, hiking, camping trip planning, track conditions,
+  or any NSW national park alert. Works with zero configuration — no API keys needed.
+allowed-tools: Bash(uv run *), Read
+argument-hint: "[park name]"
 ---
 
 # Park Alerts Skill
@@ -83,7 +85,7 @@ uv run "${CLAUDE_SKILL_DIR}/scripts/park_alerts.py" --park "Blue Mountains" --no
 
 ## Presenting Results
 
-DO NOT use markdown tables. They don't render on mobile chat platforms (Telegram, WhatsApp, Signal). Use plain text with line breaks instead.
+Follow the formatting rules in [../../references/platform-formatting.md](../../references/platform-formatting.md). Key skill-specific formatting below.
 
 ### Alert List
 

@@ -1,0 +1,26 @@
+{
+  "skill_name": "rental-prices",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "How much is rent in Newtown?",
+      "expected_output": "Runs rental_prices.py with --suburb 'Newtown' and shows median weekly rents grouped by property type and bedrooms",
+      "files": [],
+      "assertions": ["uses --suburb flag", "shows $/wk format", "groups by units and houses"]
+    },
+    {
+      "id": 2,
+      "prompt": "Cheapest 2-bedroom units under $500 a week",
+      "expected_output": "Runs rental_prices.py with --budget 500 --type unit --bedrooms 2 and lists suburbs sorted by rent ascending",
+      "files": [],
+      "assertions": ["uses --budget flag", "uses --type unit", "uses --bedrooms 2", "sorted by price"]
+    },
+    {
+      "id": 3,
+      "prompt": "Rental prices near Bondi",
+      "expected_output": "Runs rental_prices.py with --location 'Bondi' and shows nearby suburbs with rent ranges sorted by distance",
+      "files": [],
+      "assertions": ["uses --location flag", "shows distance", "shows rent ranges"]
+    }
+  ]
+}

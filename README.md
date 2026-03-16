@@ -1,5 +1,7 @@
 # life-skills
 
+![tests: 436 passed](https://img.shields.io/badge/tests-436%20passed-brightgreen) ![skills: 11](https://img.shields.io/badge/skills-11-blue) ![scripts: 11](https://img.shields.io/badge/scripts-11%20verified-blue)
+
 A collection of personal life skills for AI agents.
 
 ## Skills

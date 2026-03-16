@@ -1,0 +1,26 @@
+{
+  "skill_name": "beach-check",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Is Bondi Beach safe to swim today?",
+      "expected_output": "Runs beach_check.py with --beach 'Bondi' and shows water quality rating, pollution forecast, and map links",
+      "files": [],
+      "assertions": ["uses --beach flag", "shows water quality rating", "shows pollution forecast"]
+    },
+    {
+      "id": 2,
+      "prompt": "Best beaches near Coogee for swimming",
+      "expected_output": "Runs beach_check.py with --location 'Coogee' and lists nearby beaches sorted by distance with water quality",
+      "files": [],
+      "assertions": ["uses --location flag", "lists multiple beaches", "shows distance"]
+    },
+    {
+      "id": 3,
+      "prompt": "Beach conditions near me",
+      "expected_output": "Asks the user for their location before running the script",
+      "files": [],
+      "assertions": ["asks for location", "does not silently use IP geolocation"]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "skill_name": "sydney-commute",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "How do I get from Central to Bondi Junction?",
+      "expected_output": "Runs commute.py with --from 'Central Station' --to 'Bondi Junction' and shows trip summary with transport types, duration, and departure times",
+      "files": [],
+      "assertions": ["uses --from and --to flags", "shows duration", "shows departure times"]
+    },
+    {
+      "id": 2,
+      "prompt": "Next train from Central Station",
+      "expected_output": "Runs commute.py with --mode departures --from 'Central Station' --transport train and shows compact departure list",
+      "files": [],
+      "assertions": ["uses --mode departures", "uses --transport train", "shows departure times"]
+    },
+    {
+      "id": 3,
+      "prompt": "I need to be at Circular Quay by 9am, coming from Newtown",
+      "expected_output": "Runs commute.py with --from 'Newtown' --to 'Circular Quay' --arrive-by 09:00",
+      "files": [],
+      "assertions": ["uses --arrive-by flag", "uses --from and --to flags"]
+    }
+  ]
+}

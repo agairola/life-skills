@@ -1,0 +1,26 @@
+{
+  "skill_name": "fuel-pricing",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "What's the cheapest petrol near Newtown?",
+      "expected_output": "Runs fuel_prices.py with --location 'Newtown' and presents cheapest fuel prices in plain text format with map links",
+      "files": [],
+      "assertions": ["uses --location flag", "shows price in $/L format", "includes map links"]
+    },
+    {
+      "id": 2,
+      "prompt": "E10 prices within 10km of postcode 2042",
+      "expected_output": "Runs fuel_prices.py with --postcode 2042 --fuel-type E10 --radius 10 and shows top 3-5 stations sorted by price",
+      "files": [],
+      "assertions": ["uses --postcode flag", "uses --fuel-type E10", "uses --radius 10"]
+    },
+    {
+      "id": 3,
+      "prompt": "Where should I fill up?",
+      "expected_output": "Asks the user for their location before running the script — does not silently use IP geolocation",
+      "files": [],
+      "assertions": ["asks for location", "does not run script without location"]
+    }
+  ]
+}

@@ -6,6 +6,8 @@ description: >-
   how much the toll is, M2 toll, harbour bridge toll, tunnel toll,
   cheapest route, toll calculator, E-Tag, Linkt, or any Sydney toll
   road question. Works with zero configuration — no API keys needed.
+allowed-tools: Bash(uv run *), Read
+argument-hint: "[toll road or route]"
 ---
 
 # Sydney Tolls Skill
@@ -91,7 +93,7 @@ uv run "${CLAUDE_SKILL_DIR}/scripts/tolls.py" --road "M4" --time offpeak
 
 ## Presenting Results
 
-DO NOT use markdown tables. They don't render on mobile chat platforms (Telegram, WhatsApp, Signal). Use plain text with line breaks instead.
+Follow the formatting rules in [../../references/platform-formatting.md](../../references/platform-formatting.md). Key skill-specific formatting below.
 
 ### Single Road Result
 
