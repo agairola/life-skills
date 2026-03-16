@@ -326,52 +326,65 @@ if rc == 0 and stdout.strip():
         test("speed-cameras: type filter output is valid JSON", False, str(e))
 
 # ============================================================================
-# Test: Network-dependent scripts (zero-config/fallback mode)
+# Test: Network-dependent scripts — graceful error handling
 # ============================================================================
-print("\n\033[1m=== Network-Dependent Scripts (Fallback Mode) ===\033[0m")
+print("\n\033[1m=== Network-Dependent Scripts (Graceful Degradation) ===\033[0m")
 
-# sydney-commute: should return fallback URLs without API key
-print("\n  \033[1m— sydney-commute (no API key) —\033[0m")
-rc, stdout, stderr = run_script(SCRIPTS["sydney-commute"],
-    ["--from", "Central Station", "--to", "Bondi Junction"])
-if rc == 0 and stdout.strip():
-    try:
-        data = json.loads(stdout)
-        test("sydney-commute: output is valid JSON", True)
-        # Without API key, should have fallback URLs
-        raw = json.dumps(data).lower()
-        has_fallback = ("google_maps" in raw or "transport_nsw" in raw or
-                        "fallback" in raw or "api_key_configured" in raw or
-                        "trips" in raw)
-        test("sydney-commute: has trip data or fallback URLs", has_fallback,
-             f"keys: {list(data.keys())}")
-    except json.JSONDecodeError as e:
-        test("sydney-commute: output is valid JSON", False, str(e))
-elif rc == 0:
-    skip("sydney-commute: JSON validation", "empty output")
-else:
-    # May fail due to network — that's OK, just log it
-    skip("sydney-commute: execution", f"exit code {rc} (network may be unavailable)")
+# All network-dependent scripts should:
+# 1. Not crash (exit 0 or 1, not segfault/traceback)
+# 2. Output valid JSON even on failure (structured error)
+# 3. Include "error" or real data in the JSON
 
-# sydney-traffic: should return fallback URLs without API key
-print("\n  \033[1m— sydney-traffic (no API key) —\033[0m")
-rc, stdout, stderr = run_script(SCRIPTS["sydney-traffic"],
-    ["--location", "Sydney CBD"])
-if rc == 0 and stdout.strip():
-    try:
-        data = json.loads(stdout)
-        test("sydney-traffic: output is valid JSON", True)
-        raw = json.dumps(data).lower()
-        has_data = ("hazards" in raw or "fallback" in raw or
-                    "api_key_configured" in raw or "livetraffic" in raw)
-        test("sydney-traffic: has hazard data or fallback URLs", has_data,
-             f"keys: {list(data.keys())}")
-    except json.JSONDecodeError as e:
-        test("sydney-traffic: output is valid JSON", False, str(e))
-elif rc == 0:
-    skip("sydney-traffic: JSON validation", "empty output")
-else:
-    skip("sydney-traffic: execution", f"exit code {rc} (network may be unavailable)")
+NETWORK_TESTS = {
+    "fuel-pricing": ["--postcode", "2042"],
+    "beach-check": ["--beach", "Bondi"],
+    "air-quality": ["--site", "Randwick"],
+    "uv-sun": ["--city", "Sydney"],
+    "park-alerts": ["--limit", "3"],
+    "sydney-commute": ["--from", "Central Station", "--to", "Bondi Junction"],
+    "sydney-traffic": ["--lat", "-33.87", "--lng", "151.21", "--radius", "10"],
+}
+
+for skill, args in NETWORK_TESTS.items():
+    print(f"\n  \033[1m— {skill} —\033[0m")
+    rc, stdout, stderr = run_script(SCRIPTS[skill], args)
+
+    # Should not crash with unhandled exception
+    test(f"{skill}: does not crash (exit 0 or 1)", rc in (0, 1),
+         f"exit code {rc}, stderr: {stderr[:200]}")
+
+    # Should produce output (even if error JSON)
+    has_output = bool(stdout.strip())
+    test(f"{skill}: produces stdout output", has_output,
+         "no output at all")
+
+    if has_output:
+        try:
+            data = json.loads(stdout)
+            test(f"{skill}: output is valid JSON", True)
+
+            # Either has real results or a structured error
+            raw = json.dumps(data).lower()
+            has_real_data = any(k in raw for k in [
+                "results", "dams", "cameras", "toll_roads", "beaches",
+                "readings", "hazards", "trips", "departures", "stops",
+                "stations", "uv_index", "alerts", "suburbs",
+            ])
+            has_error = "error" in data
+            has_fallback = "fallback" in raw or "api_key_configured" in raw
+
+            test(f"{skill}: has data, error, or fallback in response",
+                 has_real_data or has_error or has_fallback,
+                 f"keys: {list(data.keys())}")
+
+            # If it errored, the error should be a readable string
+            if has_error:
+                test(f"{skill}: error message is descriptive",
+                     len(str(data["error"])) > 10,
+                     f"error: {data['error']}")
+        except json.JSONDecodeError as e:
+            test(f"{skill}: output is valid JSON", False,
+                 f"{str(e)}, stdout: {stdout[:200]}")
 
 # ============================================================================
 # Summary
