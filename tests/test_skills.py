@@ -23,6 +23,7 @@ EXPECTED_SKILLS = [
     "air-quality",
     "beach-check",
     "dam-levels",
+    "frame-tv",
     "fuel-pricing",
     "park-alerts",
     "rental-prices",
@@ -46,6 +47,7 @@ LOCATION_SKILLS = [
 
 # Skills that have optional API keys
 API_KEY_SKILLS = [
+    "frame-tv",
     "fuel-pricing",
     "sydney-commute",
     "sydney-traffic",
@@ -172,6 +174,7 @@ for skill in EXPECTED_SKILLS:
 print("\n\033[1m=== Description Quality ===\033[0m")
 
 PUSHY_KEYWORDS = {
+    "frame-tv": ["Samsung Frame", "art", "generate", "TV", "image", "wall art"],
     "fuel-pricing": ["filling up", "refuel", "servo", "petrol", "diesel", "gas station"],
     "beach-check": ["swim", "surf", "ocean", "Bondi", "water quality"],
     "air-quality": ["exercise", "run outside", "smoke", "haze", "pollution"],

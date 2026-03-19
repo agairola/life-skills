@@ -26,6 +26,7 @@ SCRIPTS = {
     "air-quality": SKILLS_DIR / "air-quality" / "scripts" / "air_quality.py",
     "beach-check": SKILLS_DIR / "beach-check" / "scripts" / "beach_check.py",
     "dam-levels": SKILLS_DIR / "dam-levels" / "scripts" / "dam_levels.py",
+    "frame-tv": SKILLS_DIR / "frame-tv" / "scripts" / "frame_tv_art.py",
     "fuel-pricing": SKILLS_DIR / "fuel-pricing" / "scripts" / "fuel_prices.py",
     "park-alerts": SKILLS_DIR / "park-alerts" / "scripts" / "park_alerts.py",
     "rental-prices": SKILLS_DIR / "rental-prices" / "scripts" / "rental_prices.py",
@@ -336,6 +337,7 @@ print("\n\033[1m=== Network-Dependent Scripts (Graceful Degradation) ===\033[0m"
 # 3. Include "error" or real data in the JSON
 
 NETWORK_TESTS = {
+    "frame-tv": ["--prompt", "calm ocean sunset oil painting", "--dry-run"],
     "fuel-pricing": ["--postcode", "2042"],
     "beach-check": ["--beach", "Bondi"],
     "air-quality": ["--site", "Randwick"],
