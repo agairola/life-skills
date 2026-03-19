@@ -1,6 +1,6 @@
 # life-skills
 
-![tests: 436 passed](https://img.shields.io/badge/tests-436%20passed-brightgreen) ![skills: 11](https://img.shields.io/badge/skills-11-blue) ![scripts: 11](https://img.shields.io/badge/scripts-11%20verified-blue)
+![tests: 436 passed](https://img.shields.io/badge/tests-436%20passed-brightgreen) ![skills: 12](https://img.shields.io/badge/skills-12-blue) ![scripts: 12](https://img.shields.io/badge/scripts-12%20verified-blue)
 
 A collection of personal life skills for AI agents.
 
@@ -20,6 +20,7 @@ A collection of personal life skills for AI agents.
 | [sydney-tolls](#sydney-tolls) | Sydney toll road prices & route cost calculator | No |
 | [rental-prices](#rental-prices) | Median rental prices for Sydney suburbs | No |
 | [read-aloud](#read-aloud) | Read files aloud with neural text-to-speech (local) | No |
+| [frame-tv](#frame-tv) | Generate or resize AI art for Samsung Frame TV | Yes (Gemini) |
 
 ### fuel-pricing
 
@@ -140,6 +141,16 @@ npx skills add agairola/life-skills --skill read-aloud
 ```
 
 Zero config — auto-installs Kokoro TTS and downloads voice models on first use. 17 voices (American + British English). Runs entirely locally.
+
+### frame-tv
+
+Generate AI artwork or resize existing images for Samsung Frame TV displays. Powered by Google Gemini.
+
+```bash
+npx skills add agairola/life-skills --skill frame-tv
+```
+
+Requires a Google Gemini API key. Generates art in nano-banana-2 style and handles precision resizing for Frame TV resolution.
 
 ## License
 
