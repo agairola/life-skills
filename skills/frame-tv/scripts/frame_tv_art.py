@@ -217,7 +217,7 @@ def generate_image(
     # Build config with image_config for aspect ratio and resolution (nano-banana-2 style)
     image_config_kwargs = {}
     if resolution:
-        image_config_kwargs["size"] = resolution
+        image_config_kwargs["image_size"] = resolution
     if aspect:
         image_config_kwargs["aspect_ratio"] = aspect
 
