@@ -116,6 +116,16 @@ npx skills add agairola/life-skills --skill rental-prices
 
 Zero config — no API keys needed. Covers 100+ Sydney suburbs with data from NSW DCJ.
 
+### read-aloud
+
+Read any markdown or text file aloud using high-quality neural text-to-speech. Streams audio instantly — no waiting.
+
+```bash
+npx skills add agairola/life-skills --skill read-aloud
+```
+
+Zero config — auto-installs Kokoro TTS and downloads voice models on first use. 17 voices (American + British English). Runs entirely locally.
+
 ## License
 
 Apache 2.0
