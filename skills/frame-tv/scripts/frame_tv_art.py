@@ -18,6 +18,8 @@ Usage:
     uv run frame_tv_art.py --prompt "in this style" --input-image ref.jpg  # use reference image
     uv run frame_tv_art.py --resize input.jpg                     # resize existing image
     uv run frame_tv_art.py --resize input.jpg --tv 43             # resize for 43" TV
+    uv run frame_tv_art.py --prompt "sunset" --preview             # quick 512px preview first
+    uv run frame_tv_art.py --upscale art/frame_art_preview_20260319.png  # upscale approved preview to 4K
     uv run frame_tv_art.py --prompt "test" --dry-run              # validate without API call
 """
 
@@ -56,6 +58,7 @@ RESOLUTION_PRESETS: dict[str, str] = {
 }
 
 DEFAULT_RESOLUTION = "4K"
+PREVIEW_RESOLUTION = "512px"
 
 # ---------------------------------------------------------------------------
 # Cache / config
@@ -162,6 +165,34 @@ def log_cost(model: str, prompt: str, output_file: str) -> None:
         "output_file": str(output_file),
     })
     COSTS_FILE.write_text(json.dumps(entries, indent=2))
+
+
+def save_preview_metadata(preview_path: str, prompt: str, aspect: str, model: str,
+                          input_images: list[str] | None, tv_size: int) -> None:
+    """Save generation metadata alongside preview image for upscale later."""
+    meta_path = Path(preview_path).with_suffix(".json")
+    meta = {
+        "prompt": prompt,
+        "aspect": aspect,
+        "model": model,
+        "input_images": input_images,
+        "tv_size": tv_size,
+        "preview_path": preview_path,
+        "created": datetime.now().isoformat(),
+    }
+    meta_path.write_text(json.dumps(meta, indent=2))
+
+
+def load_preview_metadata(preview_path: str) -> dict:
+    """Load generation metadata saved alongside a preview image."""
+    meta_path = Path(preview_path).with_suffix(".json")
+    if not meta_path.exists():
+        _err(
+            f"Preview metadata not found: {meta_path}",
+            hint="The --upscale flag requires a preview image generated with --preview. "
+                 "The .json metadata file must exist next to the preview image.",
+        )
+    return json.loads(meta_path.read_text())
 
 
 # ---------------------------------------------------------------------------
@@ -339,6 +370,16 @@ def parse_args() -> argparse.Namespace:
         help="Gemini API key (overrides env vars and config files)",
     )
     parser.add_argument(
+        "--preview",
+        action="store_true",
+        help="Generate a quick 512px preview first (use --upscale to finalize at 4K)",
+    )
+    parser.add_argument(
+        "--upscale",
+        default=None,
+        help="Path to a preview image to upscale to full resolution (reads prompt from saved metadata)",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Validate inputs without making API calls or generating images",
@@ -354,10 +395,10 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
 
-    if not args.prompt and not args.resize:
+    if not args.prompt and not args.resize and not args.upscale:
         _err(
-            "Either --prompt or --resize is required.",
-            hint="Use --prompt to generate new art, or --resize to resize an existing image.",
+            "Either --prompt, --resize, or --upscale is required.",
+            hint="Use --prompt to generate new art, --resize to resize an existing image, or --upscale to finalize a preview.",
         )
 
     if args.input_image and len(args.input_image) > 14:
@@ -380,6 +421,92 @@ def main() -> None:
             "resolution": args.resolution or DEFAULT_RESOLUTION,
             "resize_input": args.resize,
             "output_dir": args.output_dir,
+        }
+        print(json.dumps(result, indent=2))
+        return
+
+    # --- Upscale mode (finalize a preview at full resolution) ---
+    if args.upscale:
+        preview_path = args.upscale
+        if not Path(preview_path).exists():
+            _err(f"Preview image not found: {preview_path}")
+
+        meta = load_preview_metadata(preview_path)
+        api_key = get_api_key(args.api_key)
+        if not api_key:
+            _err(
+                "Gemini API key not found.",
+                hint="Set GEMINI_API_KEY environment variable, pass --api-key, or create ~/.nano-banana/.env with GEMINI_API_KEY=your_key",
+                setup_url="https://aistudio.google.com/apikey",
+            )
+
+        upscale_tv = meta.get("tv_size", tv_size)
+        up_target_w, up_target_h = TV_RESOLUTIONS[upscale_tv]
+        upscale_resolution = args.resolution or DEFAULT_RESOLUTION
+        upscale_aspect = meta.get("aspect", "16:9")
+        upscale_model = meta.get("model", args.model)
+        upscale_prompt = meta["prompt"]
+
+        # Load reference images from original generation if any
+        upscale_input_images = None
+        if meta.get("input_images"):
+            upscale_input_images = load_input_images(meta["input_images"])
+
+        # Also pass the preview image itself as a reference
+        preview_images = load_input_images([preview_path])
+        all_refs = preview_images + (upscale_input_images or [])
+
+        print(f"Upscaling preview to {upscale_resolution}...", file=sys.stderr)
+
+        try:
+            image_list = generate_image(
+                upscale_prompt, api_key, upscale_model, upscale_aspect,
+                upscale_resolution, all_refs,
+            )
+        except Exception as e:
+            _err(f"Upscale generation failed: {e}")
+
+        out_dir = Path(args.output_dir)
+        out_dir.mkdir(parents=True, exist_ok=True)
+
+        from PIL import Image
+        import io
+
+        ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+        image_bytes = image_list[0]
+
+        raw_path = out_dir / f"frame_art_{ts}_upscaled_raw.png"
+        raw_path.write_bytes(image_bytes)
+
+        img = Image.open(io.BytesIO(image_bytes))
+        img = convert_rgba_to_rgb(img)
+        src_w, src_h = img.size
+        fit_w, fit_h = calc_fit_size(src_w, src_h, up_target_w, up_target_h)
+        resized = img.resize((fit_w, fit_h), Image.LANCZOS)
+
+        final_path = out_dir / f"frame_art_{upscale_tv}in_{ts}.jpg"
+        resized.save(str(final_path), "JPEG", quality=92, subsampling=0)
+        print(f"Upscaled {src_w}x{src_h} → {fit_w}x{fit_h} for {upscale_tv}\" TV", file=sys.stderr)
+
+        try:
+            log_cost(upscale_model, upscale_prompt, str(final_path))
+        except Exception:
+            pass
+
+        result = {
+            "mode": "upscale",
+            "preview_source": preview_path,
+            "prompt": upscale_prompt,
+            "model": upscale_model,
+            "resolution": upscale_resolution,
+            "tv_size": upscale_tv,
+            "target_resolution": f"{up_target_w}x{up_target_h}",
+            "generated_resolution": f"{src_w}x{src_h}",
+            "final_resolution": f"{fit_w}x{fit_h}",
+            "raw_image": str(raw_path),
+            "output": str(final_path),
+            "output_dir": str(out_dir),
+            "transfer_tip": "Copy to USB drive for best quality — avoids compression from phone/cloud transfer.",
         }
         print(json.dumps(result, indent=2))
         return
@@ -412,14 +539,19 @@ def main() -> None:
 
     prompt = args.prompt
     aspect = args.aspect or "16:9"  # Default landscape for TV
+    is_preview = args.preview
 
-    # Determine resolution: explicit flag > auto-detect from input image > default (4K for TV)
-    resolution = args.resolution
-    if not resolution and args.input_image:
-        resolution = detect_resolution_from_image(args.input_image[0])
-        print(f"Auto-detected resolution: {resolution} (from input image)", file=sys.stderr)
-    if not resolution:
-        resolution = DEFAULT_RESOLUTION
+    # Determine resolution: preview mode forces 512px, else explicit flag > auto-detect > default
+    if is_preview:
+        resolution = PREVIEW_RESOLUTION
+        print("Preview mode: generating at 512px for quick review...", file=sys.stderr)
+    else:
+        resolution = args.resolution
+        if not resolution and args.input_image:
+            resolution = detect_resolution_from_image(args.input_image[0])
+            print(f"Auto-detected resolution: {resolution} (from input image)", file=sys.stderr)
+        if not resolution:
+            resolution = DEFAULT_RESOLUTION
 
     # Load reference images if provided
     input_images = None
@@ -467,6 +599,13 @@ def main() -> None:
             "final_resolution": f"{fit_w}x{fit_h}",
         })
 
+    # Save preview metadata for upscale later
+    if is_preview:
+        save_preview_metadata(
+            outputs[0]["raw_image"], prompt, aspect, args.model,
+            args.input_image or None, tv_size,
+        )
+
     # Log cost
     try:
         log_cost(args.model, prompt, str(outputs[0]["output"]))
@@ -474,7 +613,7 @@ def main() -> None:
         pass
 
     result = {
-        "mode": "generate",
+        "mode": "preview" if is_preview else "generate",
         "prompt": prompt,
         "model": args.model,
         "resolution": resolution,
@@ -489,8 +628,17 @@ def main() -> None:
         "final_resolution": outputs[0]["final_resolution"],
         "output_dir": str(out_dir),
         "input_images": args.input_image or None,
-        "transfer_tip": "Copy to USB drive for best quality — avoids compression from phone/cloud transfer.",
     }
+
+    if is_preview:
+        result["preview"] = True
+        result["upscale_command"] = (
+            f"uv run frame_tv_art.py --upscale {outputs[0]['raw_image']}"
+        )
+        result["next_step"] = "Review the preview image. If you like it, run the upscale_command to generate the full 4K version."
+    else:
+        result["transfer_tip"] = "Copy to USB drive for best quality — avoids compression from phone/cloud transfer."
+
     print(json.dumps(result, indent=2))
 
 

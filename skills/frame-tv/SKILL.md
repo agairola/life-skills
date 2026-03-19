@@ -64,6 +64,8 @@ uv run "${CLAUDE_SKILL_DIR}/scripts/frame_tv_art.py" [OPTIONS]
 | `--model` / `-m` | Gemini model ID | `gemini-3.1-flash-image-preview` | Gemini model to use |
 | `--aspect` / `-a` | ratio (e.g., 16:9) | `16:9` | Aspect ratio (passed via API image_config) |
 | `--api-key` | API key string | *(none)* | Gemini API key (overrides env vars) |
+| `--preview` | *(flag)* | off | Generate a quick 512px preview (use --upscale to finalize) |
+| `--upscale` | file path | *(none)* | Upscale a preview image to full 4K resolution |
 | `--dry-run` | *(flag)* | off | Validate without API call |
 
 Only parse **stdout** (JSON). Stderr contains diagnostics only.
@@ -71,7 +73,13 @@ Only parse **stdout** (JSON). Stderr contains diagnostics only.
 ## Common Commands
 
 ```bash
-# Generate art for a 55" Frame TV (default)
+# Preview first, then upscale (RECOMMENDED workflow)
+uv run "${CLAUDE_SKILL_DIR}/scripts/frame_tv_art.py" --prompt "calm ocean sunset, oil painting style" --preview
+# → shows 512px preview, user reviews it
+# → if approved, run the upscale_command from the JSON output:
+uv run "${CLAUDE_SKILL_DIR}/scripts/frame_tv_art.py" --upscale art/frame_art_<timestamp>_raw.png
+
+# Generate directly at 4K (skip preview)
 uv run "${CLAUDE_SKILL_DIR}/scripts/frame_tv_art.py" --prompt "calm ocean sunset, oil painting style"
 
 # Generate for a specific TV size
@@ -106,7 +114,31 @@ uv run "${CLAUDE_SKILL_DIR}/scripts/frame_tv_art.py" --resize photo.jpg --tv 32
 
 Follow the formatting rules in [../../references/platform-formatting.md](../../references/platform-formatting.md). Key skill-specific formatting below.
 
-### Generate Mode
+### Preview Mode (recommended default)
+
+```
+Frame TV Art Preview:
+
+Prompt: "calm ocean sunset, oil painting style"
+Preview: art/frame_art_20260319_143022_raw.png (512px)
+
+Does this look good? If yes, I'll generate the full 4K version for your 55" TV.
+```
+
+When the user approves, run the `upscale_command` from the JSON output. After upscale:
+
+```
+Frame TV Art — Full Resolution:
+
+Prompt: "calm ocean sunset, oil painting style"
+TV Size: 55" (3840×2160)
+Upscaled from preview → 3840×2160
+Output: art/frame_art_55in_20260319_143122.jpg
+
+Transfer tip: Copy to USB drive for best quality — avoids compression from phone/cloud transfer.
+```
+
+### Generate Mode (direct, no preview)
 
 ```
 Frame TV Art Generated:
@@ -133,10 +165,11 @@ Transfer tip: Copy to USB drive for best quality.
 
 ### Formatting Rules
 
+- **Default to --preview mode** for generation — show the preview and ask the user before upscaling to 4K
 - Always show the TV size and target resolution
 - Show the resize dimensions (original → final)
 - Include the output file path
-- Always mention the USB transfer tip for best quality
+- Always mention the USB transfer tip for best quality (after upscale/generate, not for previews)
 - If API key is missing, show setup instructions from references/api_upgrade.md
 - For resize-only mode, note that no API key is needed
 
