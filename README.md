@@ -6,6 +6,21 @@ A collection of personal life skills for AI agents.
 
 ## Skills
 
+| Skill | TLDR | API Key? |
+|-------|------|----------|
+| [fuel-pricing](#fuel-pricing) | Cheapest fuel prices near you across Australia | No |
+| [beach-check](#beach-check) | Beach water quality & swimming safety for NSW | No |
+| [air-quality](#air-quality) | Air quality & pollution levels at NSW stations | No |
+| [sydney-commute](#sydney-commute) | Sydney public transport trips & real-time departures | Optional |
+| [uv-sun](#uv-sun) | UV index & sun safety advice for Australian cities | No |
+| [park-alerts](#park-alerts) | Alerts, closures & fire bans for NSW National Parks | No |
+| [speed-cameras](#speed-cameras) | Speed & red light cameras near you in NSW | No |
+| [dam-levels](#dam-levels) | Current dam levels & water storage for Greater Sydney | No |
+| [sydney-traffic](#sydney-traffic) | Live traffic incidents, roadworks & hazards in Sydney | Optional |
+| [sydney-tolls](#sydney-tolls) | Sydney toll road prices & route cost calculator | No |
+| [rental-prices](#rental-prices) | Median rental prices for Sydney suburbs | No |
+| [read-aloud](#read-aloud) | Read files aloud with neural text-to-speech (local) | No |
+
 ### fuel-pricing
 
 Find the cheapest fuel prices near you across Australia. Works in any chat platform — Telegram, WhatsApp, Signal, Discord, terminal.
