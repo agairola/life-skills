@@ -1,0 +1,26 @@
+{
+  "skill_name": "frame-tv",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Generate some art for my Samsung Frame TV",
+      "expected_output": "Runs frame_tv_art.py with --prompt and a suitable art description, generates an image and shows the output path with TV size info",
+      "files": [],
+      "assertions": ["uses --prompt flag", "shows TV size and resolution", "shows output file path"]
+    },
+    {
+      "id": 2,
+      "prompt": "Resize this photo for my 65 inch Frame TV: /tmp/beach.jpg",
+      "expected_output": "Runs frame_tv_art.py with --resize /tmp/beach.jpg --tv 65, shows resized dimensions and output path",
+      "files": [],
+      "assertions": ["uses --resize flag", "uses --tv 65", "shows output path"]
+    },
+    {
+      "id": 3,
+      "prompt": "Create a calm ocean sunset painting for my living room TV",
+      "expected_output": "Runs frame_tv_art.py with --prompt describing an ocean sunset painting, generates art sized for Frame TV",
+      "files": [],
+      "assertions": ["uses --prompt with ocean/sunset theme", "shows generated image details"]
+    }
+  ]
+}
