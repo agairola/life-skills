@@ -57,10 +57,13 @@ uv run "${CLAUDE_SKILL_DIR}/scripts/frame_tv_art.py" [OPTIONS]
 |------|--------|---------|---------|
 | `--prompt` / `-p` | text | *(none)* | Text prompt for AI image generation |
 | `--resize` / `-r` | file path | *(none)* | Resize an existing image for Frame TV |
+| `--input-image` / `-i` | file path(s) | *(none)* | Reference image(s) for generation (up to 14, repeatable) |
 | `--tv` / `-t` | 32, 43, 50, 55, 65, 75, 85 | `55` | Samsung Frame TV size in inches |
+| `--resolution` | 512px, 1K, 2K, 4K | `4K` | Generation resolution preset (auto-detected from input image if not set) |
 | `--output-dir` / `-o` | directory path | `art` | Output directory |
-| `--model` / `-m` | Gemini model ID | `gemini-2.0-flash-exp` | Gemini model to use |
-| `--aspect` / `-a` | ratio (e.g., 16:9) | `16:9` | Aspect ratio hint |
+| `--model` / `-m` | Gemini model ID | `gemini-3.1-flash-image-preview` | Gemini model to use |
+| `--aspect` / `-a` | ratio (e.g., 16:9) | `16:9` | Aspect ratio (passed via API image_config) |
+| `--api-key` | API key string | *(none)* | Gemini API key (overrides env vars) |
 | `--dry-run` | *(flag)* | off | Validate without API call |
 
 Only parse **stdout** (JSON). Stderr contains diagnostics only.
@@ -77,8 +80,20 @@ uv run "${CLAUDE_SKILL_DIR}/scripts/frame_tv_art.py" --prompt "Japanese garden i
 # Resize an existing image for Frame TV
 uv run "${CLAUDE_SKILL_DIR}/scripts/frame_tv_art.py" --resize /path/to/image.jpg --tv 55
 
+# Use a reference image for style/content guidance
+uv run "${CLAUDE_SKILL_DIR}/scripts/frame_tv_art.py" --prompt "in this style but with autumn colors" --input-image ref.jpg
+
+# Multiple reference images
+uv run "${CLAUDE_SKILL_DIR}/scripts/frame_tv_art.py" --prompt "combine these styles" --input-image style1.jpg --input-image style2.jpg
+
 # Square aspect ratio (for specific art styles)
 uv run "${CLAUDE_SKILL_DIR}/scripts/frame_tv_art.py" --prompt "abstract geometric art" --aspect 1:1
+
+# Specify resolution preset
+uv run "${CLAUDE_SKILL_DIR}/scripts/frame_tv_art.py" --prompt "landscape painting" --resolution 2K
+
+# Pass API key directly
+uv run "${CLAUDE_SKILL_DIR}/scripts/frame_tv_art.py" --prompt "ocean sunset" --api-key "your-key-here"
 
 # Dry run to check config
 uv run "${CLAUDE_SKILL_DIR}/scripts/frame_tv_art.py" --prompt "test" --dry-run
@@ -167,4 +182,4 @@ Avoid transferring via messaging apps (WhatsApp, iMessage) — they compress ima
 
 ### Technology
 
-Image generation uses Google Gemini (nano-banana-2 approach) with the `responseModalities: ["IMAGE", "TEXT"]` config. Images are generated at Gemini's native resolution, then resized to exact TV dimensions using Pillow's LANCZOS resampling. Output is high-quality JPEG (quality=92, no chroma subsampling).
+Image generation uses Google Gemini (nano-banana-2 approach) with `gemini-3.1-flash-image-preview`. Aspect ratio and resolution are passed via `image_config` in the API config (not just prompt text). Supports reference/input images sent alongside the prompt. Handles multiple output images from a single generation. RGBA images are converted to RGB before JPEG saving. Images are resized to exact TV dimensions using Pillow's LANCZOS resampling. Output is high-quality JPEG (quality=92, no chroma subsampling).
