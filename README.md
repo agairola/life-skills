@@ -1,6 +1,6 @@
 # life-skills
 
-![tests: 436 passed](https://img.shields.io/badge/tests-436%20passed-brightgreen) ![skills: 12](https://img.shields.io/badge/skills-12-blue) ![scripts: 12](https://img.shields.io/badge/scripts-12%20verified-blue)
+![tests: 436 passed](https://img.shields.io/badge/tests-436%20passed-brightgreen) ![skills: 13](https://img.shields.io/badge/skills-13-blue) ![scripts: 13](https://img.shields.io/badge/scripts-13%20verified-blue)
 
 A collection of personal life skills for AI agents.
 
@@ -21,6 +21,7 @@ A collection of personal life skills for AI agents.
 | [rental-prices](#rental-prices) | Median rental prices for Sydney suburbs | No |
 | [read-aloud](#read-aloud) | Read files aloud with neural text-to-speech (local) | No |
 | [frame-tv](#frame-tv) | Generate or resize AI art for Samsung Frame TV | Yes (Gemini) |
+| [youtube-transcript](#youtube-transcript) | Extract transcripts from YouTube videos | No |
 
 ### fuel-pricing
 
@@ -151,6 +152,16 @@ npx skills add agairola/life-skills --skill frame-tv
 ```
 
 Requires a Google Gemini API key. Generates art in nano-banana-2 style and handles precision resizing for Frame TV resolution.
+
+### youtube-transcript
+
+Extract transcripts from YouTube videos. Supports any YouTube URL format and raw video IDs.
+
+```bash
+npx skills add agairola/life-skills --skill youtube-transcript
+```
+
+Zero config — no API keys needed. Outputs plain text or timestamped format. Fetches auto-generated or manual captions.
 
 ## License
 

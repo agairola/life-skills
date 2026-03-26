@@ -1,0 +1,26 @@
+{
+  "skill_name": "youtube-transcript",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Get the transcript of https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "expected_output": "Runs get_transcript.py with the YouTube URL and returns the transcript as plain text without timestamps",
+      "files": [],
+      "assertions": ["passes full URL to script", "outputs plain text without timestamps"]
+    },
+    {
+      "id": 2,
+      "prompt": "Get the transcript with timestamps for https://youtu.be/dQw4w9WgXcQ",
+      "expected_output": "Runs get_transcript.py with --timestamps flag and returns transcript in [MM:SS] format",
+      "files": [],
+      "assertions": ["uses --timestamps flag", "outputs in [MM:SS] format"]
+    },
+    {
+      "id": 3,
+      "prompt": "Get me the subtitles for dQw4w9WgXcQ",
+      "expected_output": "Recognises the raw 11-character video ID and passes it directly to get_transcript.py",
+      "files": [],
+      "assertions": ["accepts raw video ID", "does not require full URL"]
+    }
+  ]
+}
