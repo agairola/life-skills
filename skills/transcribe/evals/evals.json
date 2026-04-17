@@ -1,0 +1,33 @@
+{
+  "skill_name": "transcribe",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Transcribe ~/Downloads/meeting.m4a",
+      "expected_output": "Runs transcribe.py with the file path and prints the plain-text transcript to stdout using the default large-v3-turbo model",
+      "files": [],
+      "assertions": ["uses default model", "prints transcript to stdout", "does not save to file unless asked"]
+    },
+    {
+      "id": 2,
+      "prompt": "Generate SRT subtitles for video.mp4",
+      "expected_output": "Runs transcribe.py with --format srt and --output video.srt, then confirms the file was saved",
+      "files": [],
+      "assertions": ["uses --format srt", "uses --output flag", "reports saved file path"]
+    },
+    {
+      "id": 3,
+      "prompt": "Translate this French audio to English: french.mp3",
+      "expected_output": "Runs transcribe.py with --translate flag and presents the English translation",
+      "files": [],
+      "assertions": ["uses --translate flag", "presents English output"]
+    },
+    {
+      "id": 4,
+      "prompt": "What did they say in this audio?",
+      "expected_output": "Asks the user for the audio file path before running the script — does not guess or hallucinate content",
+      "files": [],
+      "assertions": ["asks for file path", "does not run script without input"]
+    }
+  ]
+}

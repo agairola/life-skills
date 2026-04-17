@@ -1,6 +1,6 @@
 # life-skills
 
-![tests: 436 passed](https://img.shields.io/badge/tests-436%20passed-brightgreen) ![skills: 13](https://img.shields.io/badge/skills-13-blue) ![scripts: 13](https://img.shields.io/badge/scripts-13%20verified-blue)
+![tests: 436 passed](https://img.shields.io/badge/tests-436%20passed-brightgreen) ![skills: 14](https://img.shields.io/badge/skills-14-blue) ![scripts: 14](https://img.shields.io/badge/scripts-14%20verified-blue)
 
 A collection of personal life skills for AI agents.
 
@@ -22,6 +22,7 @@ A collection of personal life skills for AI agents.
 | [read-aloud](#read-aloud) | Read files aloud with neural text-to-speech (local) | No |
 | [frame-tv](#frame-tv) | Generate or resize AI art for Samsung Frame TV | Yes (Gemini) |
 | [youtube-transcript](#youtube-transcript) | Extract transcripts from YouTube videos | No |
+| [transcribe](#transcribe) | Transcribe local audio/video with Whisper (local) | No |
 
 ### fuel-pricing
 
@@ -162,6 +163,16 @@ npx skills add agairola/life-skills --skill youtube-transcript
 ```
 
 Zero config — no API keys needed. Outputs plain text or timestamped format. Fetches auto-generated or manual captions.
+
+### transcribe
+
+Transcribe audio or video files to text using OpenAI Whisper running entirely locally. Supports mp3, m4a, wav, mp4, mov, flac, ogg, webm. Outputs plain text, SRT, VTT, or JSON with per-segment/word timestamps.
+
+```bash
+npx skills add agairola/life-skills --skill transcribe
+```
+
+Zero config — auto-installs on first run and downloads the `large-v3-turbo` model (~800MB) to `~/.cache/huggingface/`. Uses MLX acceleration on Apple Silicon (requires `ffmpeg`) and falls back to `faster-whisper` (CPU) on Intel Macs and Linux. No API keys.
 
 ## License
 

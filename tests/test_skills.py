@@ -31,6 +31,7 @@ EXPECTED_SKILLS = [
     "sydney-commute",
     "sydney-tolls",
     "sydney-traffic",
+    "transcribe",
     "uv-sun",
 ]
 
@@ -186,6 +187,8 @@ PUSHY_KEYWORDS = {
     "sydney-traffic": ["traffic", "road closure", "accident", "roadwork"],
     "sydney-tolls": ["toll", "M2", "harbour bridge", "E-Tag"],
     "rental-prices": ["rent", "rental", "affordable", "moving to Sydney", "apartment"],
+    "transcribe": ["transcribe", "transcript", "speech to text", "STT", "Whisper",
+                    "subtitles", "captions", "SRT", "VTT", "audio to text"],
 }
 
 for skill in EXPECTED_SKILLS:

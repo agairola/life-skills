@@ -34,6 +34,7 @@ SCRIPTS = {
     "sydney-commute": SKILLS_DIR / "sydney-commute" / "scripts" / "commute.py",
     "sydney-tolls": SKILLS_DIR / "sydney-tolls" / "scripts" / "tolls.py",
     "sydney-traffic": SKILLS_DIR / "sydney-traffic" / "scripts" / "traffic.py",
+    "transcribe": SKILLS_DIR / "transcribe" / "scripts" / "transcribe.py",
     "uv-sun": SKILLS_DIR / "uv-sun" / "scripts" / "uv_sun.py",
 }
 
