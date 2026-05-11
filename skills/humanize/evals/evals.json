@@ -1,0 +1,26 @@
+{
+  "skill_name": "humanize",
+  "evals": [
+    {
+      "id": 0,
+      "name": "classic-ai-sales-email",
+      "prompt": "ok i wrote this with chatgpt and i need to send it to a head of platform at a fintech company in melbourne tomorrow morning. can you humanize it for me? im happy with three versions so i can pick.\n\n---\n\nSubject: Exploring Potential Collaboration Opportunities\n\nHi Marcus,\n\nI hope this email finds you well. I wanted to reach out to express my interest in connecting regarding potential synergies between raxIT and Latitude Financial. I believe there is significant value in exploring how we might collaborate moving forward, particularly given the strategic alignment between our organizations' focus on security, reliability, and innovation in the financial services space.\n\nOur platform has been designed to leverage cutting-edge AI capabilities to enhance security postures, and I think it could play a vital role in supporting your team's ongoing initiatives. It's not just about catching threats — it's about empowering your team to focus on what matters most.\n\nPlease don't hesitate to reach out if you would be available for a brief call at your earliest convenience. I would be more than happy to circle back next week to discuss further.\n\nBest regards,\nAdesh",
+      "expected_output": "Three versions (SUBTLE / HUMAN / CEO) of the email with every banned phrase removed, em-dash replaced, 'not X, it's Y' pattern killed, name (Marcus) and companies (raxIT, Latitude Financial) preserved, CEO version under 50% length, no auto-appended 'Sent from my iPhone' (original had no signature line). Length: HUMAN ~20-30% shorter, CEO ~30-50% of original.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "structural-tells-linkedin-post",
+      "prompt": "this is for a linkedin post about a product launch and it sounds super AI to me. i tried to write it myself but i was tired and used claude and it gave me this. make it sound like a real person wrote it pls\n\n---\n\nToday, we're thrilled to announce the launch of Sentinel — a platform that's quietly transforming how security teams approach AI risk.\n\nIn building Sentinel, we focused on three core principles: trustworthiness, transparency, and resilience. The result is a tool that doesn't just detect threats — it helps teams understand them. From early-stage startups to Fortune 500 enterprises, Sentinel meets organizations where they are.\n\nWhat sets Sentinel apart isn't just its detection capabilities, ensuring comprehensive coverage across your AI stack. It's the way it empowers security teams to move faster, highlighting risk in real-time and reflecting the priorities your organization actually cares about.\n\nWe're just getting started. If you're navigating AI security challenges, we'd love to chat.",
+      "expected_output": "Three versions where: em-dashes gone, the 'It's not X, it's Y' / 'doesn't just X, it Ys' structures eliminated, the triplet 'trustworthiness, transparency, and resilience' rewritten or cut, the false range 'from early-stage startups to Fortune 500 enterprises' rephrased, the present-participle pile-ups ('ensuring...', 'highlighting...', 'reflecting...') cut, product name (Sentinel) preserved across all three versions.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "short-input-no-inflation",
+      "prompt": "humanize this slack message i was about to send to my manager:\n\n\"Hi Sarah, I wanted to touch base regarding the Q3 roadmap planning session scheduled for next Tuesday. I believe it would be valuable to align on priorities beforehand. Please let me know what works for your schedule.\"",
+      "expected_output": "Three short versions (input is only ~40 words, so SUBTLE stays close to that length, HUMAN trims to ~25-30, CEO is one short sentence). 'Touch base', 'I wanted to', 'Please let me know', 'I believe it would be valuable' all removed. Name 'Sarah' preserved. Time reference 'next Tuesday' preserved. No fake formality, no inflation.",
+      "files": []
+    }
+  ]
+}

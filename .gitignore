@@ -1,7 +1,7 @@
 __pycache__/
 *.pyc
 .DS_Store
-fuel-pricing-workspace/
+*-workspace/
 
 # AI tool configs
 .agent/
