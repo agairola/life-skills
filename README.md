@@ -1,6 +1,6 @@
 # life-skills
 
-![tests: 436 passed](https://img.shields.io/badge/tests-436%20passed-brightgreen) ![skills: 14](https://img.shields.io/badge/skills-14-blue) ![scripts: 14](https://img.shields.io/badge/scripts-14%20verified-blue)
+![tests: 436 passed](https://img.shields.io/badge/tests-436%20passed-brightgreen) ![skills: 15](https://img.shields.io/badge/skills-15-blue) ![scripts: 14](https://img.shields.io/badge/scripts-14%20verified-blue)
 
 A collection of personal life skills for AI agents.
 
@@ -23,6 +23,7 @@ A collection of personal life skills for AI agents.
 | [frame-tv](#frame-tv) | Generate or resize AI art for Samsung Frame TV | Yes (Gemini) |
 | [youtube-transcript](#youtube-transcript) | Extract transcripts from YouTube videos | No |
 | [transcribe](#transcribe) | Transcribe local audio/video with Whisper (local) | No |
+| [humanize](#humanize) | Rewrite AI-sounding text in 3 tones (Subtle/Human/CEO) | No |
 
 ### fuel-pricing
 
@@ -173,6 +174,16 @@ npx skills add agairola/life-skills --skill transcribe
 ```
 
 Zero config — auto-installs on first run and downloads the `large-v3-turbo` model (~800MB) to `~/.cache/huggingface/`. Uses MLX acceleration on Apple Silicon (requires `ffmpeg`) and falls back to `faster-whisper` (CPU) on Intel Macs and Linux. No API keys.
+
+### humanize
+
+Rewrite AI-sounding text into three side-by-side versions at progressive intensities — Subtle (polished but de-roboticized), Human (fast and natural), CEO (short and phone-typed). Targets the structural tells most humanizers miss: the "not just X, it's Y" family, abstract-noun triplets, present-participle padding, false ranges, and em-dashes. Includes a self-check pass before output and explicit anti-fingerprint rules (no deterministic typo placement, no auto "Sent from my iPhone").
+
+```bash
+npx skills add agairola/life-skills --skill humanize
+```
+
+Pure prompt skill — no API keys, no scripts, no install. Works on emails, LinkedIn posts, Slack messages, press releases, customer-complaint replies, exec memos, recruiter outreach, or any text that reads as AI-generated.
 
 ## License
 
