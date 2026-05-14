@@ -30,7 +30,7 @@ Do **not** trigger for: writing new text from scratch, summarising long document
 
 ## What you produce
 
-Always three versions, in this exact order, with these exact labels:
+Always three versions, in this exact order. The third block's label depends on the input:
 
 ```
 ─── SUBTLE ───
@@ -39,9 +39,16 @@ Always three versions, in this exact order, with these exact labels:
 ─── HUMAN ───
 [rewrite]
 
-─── CEO ───
+─── CEO ───   (or ─── TIGHT ───, see decision rule below)
 [rewrite]
 ```
+
+**Pick CEO or TIGHT for the third block:**
+
+- **CEO** — default. Use for emails, Slack DMs, asks, replies, cold outreach, short interpersonal messages. Anything where the input is conversational and roughly ≤150 words, or where the entire message is built around a single ask.
+- **TIGHT** — use when the input is a substance-heavy long-form post: launch announcement, Show HN, LinkedIn post about a product, technical update, conference recap, anything where the *content itself* is the point and there's no single ask. Heuristic: >150 words, contains named systems / vendors / citations / dates, and doesn't end with a meeting ask or "let me know".
+
+Never produce both CEO and TIGHT in the same output. Pick one based on the input.
 
 No preamble, no closing summary, no "Here are your versions." Just the three blocks. The user wants to compare and pick — don't slow that down with commentary.
 
@@ -217,6 +224,34 @@ It should read like: *"I said the thing and didn't overwork it."*
 
 It should read like: *"sent fast from a phone during something else."*
 
+---
+
+### TIGHT
+
+(Use TIGHT instead of CEO when the input is a substance-heavy long-form post. See "What you produce" for the decision rule.)
+
+**Target:** the same announcement, written by someone who doesn't pad. Mobile-fast voice on a long post. Substance survives intact; tone changes.
+
+**Length:** ~70–85% of the original. Trim adjectives, hedges, throat-clearing, and connective tissue. Do **not** cut named systems, vendors, regulations, dates, citations, links, or proper nouns. If you can't get under 85% without dropping one of those, stop at 90% — the length target is a guide, the substance rule is a hard constraint.
+
+**Style:**
+- Keep the paragraph structure. Every paragraph in the input should have a corresponding paragraph in TIGHT.
+- Shorter sentences than the original. One claim per sentence — no multi-claim sentences glued with "while also" / "in addition to".
+- Drop puffery adjectives: *seamless, comprehensive, robust, powerful, cutting-edge, world-class, innovative*. The thing being described is the proof; the adjective is filler.
+- Direct verbs: *ships, uses, stores, sends, runs, blocks*. Not *leverages, enables, facilitates, empowers*.
+- Drop editorializing adverbs (*quietly, fundamentally, truly, remarkably*) and softening hedges (*it's worth noting that, I think it's important to mention*).
+- Keep lists as lists. Keep inline links. Keep code/identifier formatting.
+- Match the original's register — if the input is technical, TIGHT stays technical. If casual, TIGHT stays casual.
+
+**Don't:**
+- Don't summarize. TIGHT is not a TL;DR. If a paragraph in the input had three technical claims, TIGHT has three technical claims — said in fewer words each, not collapsed into one.
+- Don't soften technical specifics to make prose flow. "Stored in a local-only SwiftData store" stays as is — don't rewrite to "kept on-device" if the input named the system.
+- Don't insert manufactured typos. TIGHT is for public/high-stakes content where fake imperfections would undermine credibility.
+- Don't add personality the original didn't have.
+- Don't append a signature the original didn't have.
+
+It should read like: *"the same post, with every padding word removed."*
+
 ## Transformation rules
 
 These override the per-tone specs when they conflict:
@@ -225,7 +260,8 @@ These override the per-tone specs when they conflict:
 - **If the input is already casual:** don't over-clean SUBTLE into formality. Just remove AI tells.
 - **If the input contains a clear call-to-action:** the CTA must survive all three versions, made progressively more direct.
 - **If the input contains a vague pitch ("synergies", "explore opportunities"):** force concreteness — what specifically is being asked for? If you genuinely can't tell, say so in plain language ("not sure exactly what you're proposing — want to jump on a quick call?") rather than echoing the vagueness.
-- **If the input has bullet points or a list:** keep the list in SUBTLE, may flatten to prose in HUMAN, definitely flatten in CEO unless the list is the entire message.
+- **If the input has bullet points or a list:** keep the list in SUBTLE, may flatten to prose in HUMAN, definitely flatten in CEO unless the list is the entire message. **TIGHT keeps lists as lists.**
+- **If the input is a substance-heavy long-form post** (>150 words, content not ask — launch posts, Show HN, technical updates, LinkedIn announcements): use TIGHT instead of CEO as the third block. The preserve list grows: every named system, vendor, regulation, date, citation, and link must survive all three versions. Failing this turns the skill into a summarizer — different tool, wrong job.
 
 ## Worked example
 
@@ -249,6 +285,56 @@ Notice: no em-dashes, no "synergies", no "moving forward" / "going forward", no 
 
 (Notice also: the example deliberately does NOT use "going forward" or "what works on your end" — those are common humanizer outputs that themselves became fingerprints. Don't reach for them.)
 
+## Worked example — long-form post (TIGHT path)
+
+**Input** (235 words, launch post — triggers TIGHT, not CEO):
+> Today, I'm thrilled to announce the launch of Cinder — a build cache that's quietly transforming how teams ship CI pipelines.
+>
+> In building Cinder, we focused on three core principles: speed, reliability, and developer experience. Cinder doesn't just cache build artifacts — it understands the dependency graph of your monorepo and invalidates intelligently. Whether you're a small startup or a Fortune 500 enterprise, Cinder meets you where you are.
+>
+> Under the hood, Cinder uses content-addressed storage backed by S3 and Cloudflare R2, with a Rust daemon that hashes artifacts in parallel. Honeycomb's 2023 Buildkite outage study showed that roughly 40% of CI cost is wasted recomputation — we're going after that.
+>
+> We're proud to share that early adopters at Linear and Vercel are seeing build times drop by 60%, ensuring their teams ship faster than ever.
+>
+> Try it free at cinder.dev/start. If you're navigating CI pain, we'd love to chat.
+
+**Output:**
+
+```
+─── SUBTLE ───
+Launching Cinder today. It's a build cache for monorepo CI pipelines that hashes your dependency graph and invalidates artifacts intelligently.
+
+Under the hood, Cinder uses content-addressed storage backed by S3 and Cloudflare R2, with a Rust daemon that does the hashing in parallel. Honeycomb's 2023 Buildkite outage study put wasted recomputation at roughly 40% of CI cost, and that's the target.
+
+Early adopters at Linear and Vercel are seeing build times drop by about 60%.
+
+Try it at cinder.dev/start. Happy to chat if you're working through CI pain.
+
+─── HUMAN ───
+Shipped Cinder today. Build cache for monorepo CI.
+
+Hashes the dependency graph and invalidates artifacts intelligently. Content-addressed storage on S3 + R2, Rust daemon doing the hashing in parallel.
+
+Honeycombs 2023 Buildkite outage study put wasted recomputation at ~40% of CI cost. Thats the wedge.
+
+Linear and Vercel are seeing builds drop ~60% so far.
+
+cinder.dev/start. Glad to talk CI if youre stuck.
+
+─── TIGHT ───
+Launched Cinder. A build cache for monorepo CI pipelines.
+
+Cinder hashes the dependency graph and invalidates artifacts intelligently. Storage is content-addressed and backed by S3 plus Cloudflare R2. A Rust daemon does the hashing in parallel.
+
+Honeycomb's 2023 Buildkite outage study put wasted recomputation at roughly 40% of CI cost. That's the target.
+
+Early adopters at Linear and Vercel are seeing build times drop 60%.
+
+Try it at cinder.dev/start. Happy to answer CI questions.
+```
+
+Notice: every named system (Cinder, S3, Cloudflare R2, Rust, Honeycomb, Buildkite, Linear, Vercel), the date (2023), the citation (Buildkite outage study), the link (cinder.dev/start) and the specific number (40%, 60%) survive in all three. The em-dashes from the input are gone everywhere. The "not just cache, it understands" sentence is broken into two direct claims. The triplet "speed, reliability, and developer experience" is dropped — it added nothing the rest of the post doesn't prove. HUMAN drops three apostrophes (`Honeycombs`, `Thats`, `youre`) as its small imperfections; TIGHT does not (high-stakes launch post). TIGHT is the same length as HUMAN here — they differ in *register*, not bytes: HUMAN sounds between-meetings, TIGHT sounds like a senior writer who doesn't pad. CEO would have collapsed this to 4 sentences and dropped half the named systems — wrong tool for this input.
+
 ## Anti-patterns to actively avoid
 
 - **Inserting the same typo every time** — if HUMAN always has the typo in the first two words, that's a fingerprint of the skill, not a sign of a human. Vary placement, vary type, or skip it.
@@ -258,19 +344,34 @@ Notice: no em-dashes, no "synergies", no "moving forward" / "going forward", no 
 - **Replacing one cliché with another** — don't swap "synergy" for "alignment" or "leverage" for "harness". Use plain words.
 - **Echoing the marketing-site demo verbatim** — that specific "I wanted to reach out about potential synergies..." input has been used in every humanizer demo. Don't memorize it; apply the principles to whatever the user actually pasted.
 
-## Self-check before output
+## Two-pass critique before output
 
-Before you write the three blocks, do a fast scan of each draft against this checklist. If any item is true, rewrite that block before producing the final output:
+Single-shot rewrites miss their own AI tells — models acknowledge "no em-dashes" then produce em-dashes in the same response. Do this in two passes for each version before you commit to output.
 
-1. **Em-dashes (—)?** Replace with period, comma, or parens.
-2. **Any "not just X, it's Y" / "doesn't just X, it Ys" / "isn't just X, it Ys" / "not only X, but Y" sentence?** Rewrite to a single direct statement.
-3. **Any three-item list of abstract nouns or adjectives** (e.g., "trust, transparency, and resilience" / "fast, reliable, and secure")? Cut to one concrete claim or two items.
-4. **Any sentence ending with ", ensuring/highlighting/reflecting/enabling/empowering/allowing X"?** Drop the participle clause.
-5. **Any banned phrase** from the avoid-list still present (search the draft for "synergy", "circle back", "moving forward", "going forward", "hope this", "don't hesitate", "earliest convenience", "let me know", "what works", "delve", "leverage")?
-6. **Did the CEO version auto-append "Sent from my iPhone"** when the original had no signature? Remove it.
-7. **Are the three versions reading like three different people?** If so, rewrite to make them the same voice at three speeds.
+**Pass 1 — answer in one sentence: "what in this draft would a reader flag as AI?"**
 
-This check costs you a few seconds. Skipping it is what every other humanizer does — and it's why their outputs still read as AI.
+Force yourself to name something specific. "Looks fine" is never the right answer on the first read — there is always something. Use the catalogue below as the vocabulary:
+
+- An em-dash (—) anywhere — this is the most common silent failure
+- A "not just X, it's Y" / "doesn't just X, it Ys" / "isn't just X, it Ys" / "not only X, but Y" sentence
+- A three-item list of abstract nouns or adjectives ("trust, transparency, and resilience")
+- A sentence ending with ", ensuring/highlighting/reflecting/enabling/empowering/allowing X"
+- A banned phrase: search for *synergy, circle back, moving forward, going forward, hope this, don't hesitate, earliest convenience, let me know, what works, delve, leverage, utilize*
+- (CEO only) An auto-appended "Sent from my iPhone" when the original had no signature
+- (TIGHT only) A named system, vendor, regulation, citation, or link from the input that didn't survive
+- Three versions that read like three different people instead of one person at three speeds
+
+**Pass 2 — rewrite only what Pass 1 named.** If Pass 1 said "em-dash in sentence 2 of SUBTLE", fix that specifically. Don't rewrite the whole block — that just produces a new set of tells.
+
+If Pass 1 honestly turns up nothing after a careful read, ship the draft. The critique is there to catch what you missed, not to manufacture changes.
+
+## Em-dash gate (non-negotiable final check)
+
+After the two-pass critique, scan each block character-by-character for the em-dash character `—` (Unicode U+2014). If you find any, replace each with a period, comma, or pair of parentheses based on context, then re-scan.
+
+Hyphens (`-`) are fine. En-dashes (`–`, U+2013) in number ranges are fine. The character to hunt is `—`.
+
+This gate exists separate from the critique because models acknowledge "no em-dashes" instructions and then output them anyway in the same response. Treat the scan as a deliberate final step, not a passive rule. Skipping it is what every other humanizer does — and it's why their outputs still read as AI.
 
 ## If the input isn't AI-sounding
 
